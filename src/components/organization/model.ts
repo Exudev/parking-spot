@@ -1,6 +1,8 @@
 import { Schema, Model } from 'mongoose';
+
+
 // Schema
-const organizationSchema = new Schema({
+const OrganizationSchema = new Schema({
     organizationName: { type: String, required: true },
     latitude :{
       type: String,
@@ -22,5 +24,5 @@ const organizationSchema = new Schema({
 });
 
 
-const model = new Model('Organization', organizationSchema);
+const model = new Model('OrganizationModel', OrganizationSchema);
 module.exports = model;
