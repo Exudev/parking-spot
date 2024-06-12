@@ -1,6 +1,5 @@
 import { Schema, Model } from 'mongoose';
 
-
 // Schema
 const OrganizationSchema = new Schema({
     organizationName: { type: String, required: true },
@@ -22,7 +21,6 @@ const OrganizationSchema = new Schema({
     },
     organizationOwner: { type: String, required: true },
 });
-
 
 const model = new Model('OrganizationModel', OrganizationSchema);
 module.exports = model;
