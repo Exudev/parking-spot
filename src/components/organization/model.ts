@@ -1,25 +1,17 @@
 import { Schema, Model } from 'mongoose';
 
-// Schema
+// Schema  
 const OrganizationSchema = new Schema({
-    organizationName: { type: String, required: true },
-    latitude :{
-      type: String,
-      required: true,
+    name: { type: String, required: true },
+    location: {
+      type: { type: String, enum: ["Point"], required: true },
+      coordinates: { type: [Number], required: true }
     },
-    longitude: {
-      type:String ,
-      required:true,
+    locationDelta: {
+      type: { type: String, enum: ["Point"], required: true },
+      coordinates: { type: [Number], required: true }
     },
-    latitudeDelta:{
-      type:String ,
-      required:true,
-    },
-    longitudeDelta:{
-      type:String ,
-      required:true,
-    },
-    organizationOwner: { type: String, required: true },
+    owner: { type: String, required: true },
 });
 
 const model = new Model('OrganizationModel', OrganizationSchema);
