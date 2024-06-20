@@ -4,11 +4,11 @@ export interface IOrganization extends Document {
   name: string;
   location: {
     type: 'Point';
-    coordinates: number[];
+    coordinates: [number, number];
   };
   locationDelta: {
     type: 'Point';
-    coordinates: number[];
+    coordinates: [number, number];
   };
   owner: string;
 }

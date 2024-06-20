@@ -1,10 +1,20 @@
 import express from 'express';
-const router = express.Router();
+import {
+  createOrganization,
+  getOrganization,
+  getAllOrganizations,
+  deleteOrganization,
+  checkOrganizationExists,
+  getNamesandCoordinates,
+} from './controller';
 
-router.get('/organizations', (_req, res) => {
+const organizationRouter = express.Router();
 
-});
+organizationRouter.post('/organization', createOrganization);
+organizationRouter.get('/organization/:id', getOrganization);
+organizationRouter.get('/organization', getAllOrganizations);
+organizationRouter.delete('/organization/:id', deleteOrganization);
+organizationRouter.get('/organization/exists/:email', checkOrganizationExists);
+organizationRouter.get('/organization/names-coordinates', getNamesandCoordinates);
 
-router.post('/organization', (_req, res) => {
-
-});
+export default organizationRouter;
