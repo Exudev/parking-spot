@@ -1,32 +1,47 @@
 import { ObjectId } from 'mongodb';
 import {Organization} from '../../types/types'
-import OrganizationModel from "./model"
+import OrganizationModel from "./models"
+import { RepositoryError } from '../../utils/errors';
 
 
-async function createOrganization(organization: Organization): Promise<boolean | Organization> {
+async function createOrganization(organization: Organization): Promise<{wasCreated: true}| undefined> {
   try {
     const newOrganization = new OrganizationModel(organization);
-    return await newOrganization.save();
+    //checking if exists 
+   const exists = await checkOrganizationExists(organization.name);
+   if(exists)
+    {
+      throw new RepositoryError('exists',409, "already-exists");
+    }
+
+    const created = await newOrganization.save();
+    if(created)
+      {
+        return {wasCreated: true};
+      }
   } catch (error) {
-    console.error('Error occurred during creating organization:', error);
-    return false;
+    throw new RepositoryError('server-error',409, error);
   }
 }
 
 async function getNamesandCoordenates(): Promise<Organization[]> {
   try {
-    const organizations = await OrganizationModel.find({}, 'organizationName location locationDelta');
+    const organizations = await OrganizationModel.find({}, 'name location locationDelta');
     return organizations;
   } catch (error) {
     throw new Error('An error occurred while fetching organization names and coordinates: ' + error);
   }
 }
 
-async function getOrganization(organizationId: string): Promise<Organization | null> {
+async function getOrganization(organizationId: string): Promise<Organization | undefined> {
   try {
     const objectId = new ObjectId(organizationId);
     const organization = await OrganizationModel.findById(objectId).exec();
-    return organization;
+    if(organization)
+      {
+        return organization;
+      }
+    else return undefined;
   } catch (error) {
     console.error('Error occurred during searching organization:', error);
     throw error;
@@ -53,10 +68,13 @@ async function deleteOrganization(id: string): Promise<{ deletedCount?: number }
   }
 }
 
-async function checkOrganizationExists(email: string): Promise<boolean> {
+async function checkOrganizationExists(name: string): Promise<boolean | undefined> {
   try {
-    const organizationFound = await OrganizationModel.findOne({ email });
-    return !!organizationFound;
+    const organizationFound = await OrganizationModel.findOne({ name: {$eq :name} });
+   if(organizationFound){
+    return true
+   }
+    else false;
   } catch (error) {
     console.error('Error occurred during searching organization:', error);
     return false;

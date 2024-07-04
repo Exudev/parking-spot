@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { config } from './config/index';
 import connectDB from './db/mongo';
 import router from './network/routes';
+import errorMiddleware from './middlewares/errorMiddleware';
 
 dotenv.config();
 if (!config.dbUser || !config.dbPassword|| !config.dbHost) {
@@ -17,6 +18,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 router(app);
+app.use(errorMiddleware);
 app.use('/app', express.static('./public'));
 
 let retryAttempts = 0;

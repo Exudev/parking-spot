@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { errorCode } from '../types/types';
 
 
 interface ApiResponse {
@@ -6,7 +7,6 @@ interface ApiResponse {
     body: string;
 }
 
-type errorCode = "forbidden"| "exists"|"server-error"|"invalid-data";
 
 type SuccessResponse = (req: Request, res: Response, message: string, status?: number) => void;
 type ErrorResponse = (req: Request, res: Response, errorCode: errorCode, status?: number, errorMessage?: string) => void;

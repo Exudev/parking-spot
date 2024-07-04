@@ -1,5 +1,5 @@
 import { Schema, model, Document } from 'mongoose';
-
+import { OrganizationLookup } from '../../types/types';
 export interface IOrganization extends Document {
   name: string;
   location: {
@@ -24,7 +24,7 @@ const OrganizationSchema = new Schema<IOrganization>({
     coordinates: { type: [Number], required: true },
   },
   owner: { type: String, required: true },
-});
+},{ timestamps: true });
 
 const OrganizationModel = model<IOrganization>('Organization', OrganizationSchema);
 
