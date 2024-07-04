@@ -1,30 +1,37 @@
 import { Request, Response } from 'express';
-import { errorCode } from '../types/types';
+import { errorCode, responseCode } from '../types/types';
 
+type ApiResponse =
+    | {
+        type: "response";
+        responseCode: responseCode;
+        response: string;
+    }
+    | {
+        type: "error";
+        errorCode: errorCode;
+        errorMessage: string;
+    };
 
-interface ApiResponse {
-    error: string;
-    body: string;
-}
+type SuccessResponse = (req: Request, res: Response, responseCode: responseCode, message: string,  status?: number) => void;
+type ErrorResponse = (req: Request, res: Response, errorCode: errorCode, errorMessage: string, status?: number) => void;
 
-
-type SuccessResponse = (req: Request, res: Response, message: string, status?: number) => void;
-type ErrorResponse = (req: Request, res: Response, errorCode: errorCode, status?: number, errorMessage?: string) => void;
-
-export const success: SuccessResponse = (req, res, message, status = 200) => {
-    console.log(`[response meesage:] ${message}`);
+export const success: SuccessResponse = (req, res, responseCode, message, status = 200) => {
+    console.log(`[response message:] ${message}`);
     const response: ApiResponse = {
-        error: '',
-        body: message
+        type: 'response',
+        responseCode: responseCode,
+        response: message,
     };
     res.status(status).send(response);
 };
 
-export const error: ErrorResponse = (req, res, errorCode, status = 500, errorMessage = '') => {
+export const error: ErrorResponse = (req, res, errorCode, errorMessage, status = 500) => {
     console.error(`[response error:] ${errorMessage}`);
     const response: ApiResponse = {
-        error: errorCode,
-        body: ''
+        type: 'error',
+        errorCode: errorCode,
+        errorMessage: errorMessage,
     };
     res.status(status).send(response);
 };

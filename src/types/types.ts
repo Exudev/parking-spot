@@ -1,4 +1,6 @@
 export type errorCode = "forbidden"| "exists"|"server-error"|"invalid-data";
+export type responseCode = "created"| "updated"|"fetched"|"deleted";
+
 interface GeoJSONPoint {
     type: "Point";
     coordinates: [number, number]; // [longitude, latitude]
