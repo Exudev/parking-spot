@@ -27,5 +27,5 @@ const OrganizationSchema = new Schema<IOrganization>({
 },{ timestamps: true });
 
 const OrganizationModel = model<IOrganization>('Organization', OrganizationSchema);
-
+OrganizationSchema.index({ name: 1 }, { collation: { locale: 'en', strength: 3 } });
 export default OrganizationModel;

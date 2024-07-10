@@ -3,7 +3,7 @@ import { errorCode, responseCode } from '../types/types';
 
 type ApiResponse =
     | {
-        type: "response";
+        type: "response" | "info";
         responseCode: responseCode;
         response: string;
     }

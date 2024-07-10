@@ -3,18 +3,20 @@ import {Organization} from '../../types/types'
 import OrganizationModel from "./models"
 import { RepositoryError } from '../../utils/errors';
 
-
+// For Organizations 
 async function createOrganization(organization: Organization): Promise<{wasCreated: true}| undefined> {
   try {
     const newOrganization = new OrganizationModel(organization);
     //checking if exists 
-   const exists = await checkOrganizationExists(organization.name);
+   const exists =  await OrganizationModel.findOne({ name: {$eq :name} },{collation:'en', strength: 3});
+
    if(exists)
     {
       throw new RepositoryError('exists',409, "already-exists");
     }
 
     const created = await newOrganization.save();
+    // Crear usuario para esa organizacion como owner y hacer el settings de una org. 
     if(created)
       {
         return {wasCreated: true};
@@ -24,12 +26,13 @@ async function createOrganization(organization: Organization): Promise<{wasCreat
   }
 }
 
-async function getNamesandCoordenates(): Promise<Organization[]> {
+async function deleteOrganization(id: string): Promise<{ deletedCount?: number }> {
   try {
-    const organizations = await OrganizationModel.find({}, 'name location locationDelta');
-    return organizations;
+    const result = await OrganizationModel.deleteOne({ _id: id });
+    return result;
   } catch (error) {
-    throw new Error('An error occurred while fetching organization names and coordinates: ' + error);
+    console.error('Error occurred during deleting organization:', error);
+    throw error;
   }
 }
 
@@ -48,6 +51,30 @@ async function getOrganization(organizationId: string): Promise<Organization | u
   }
 }
 
+
+async function checkOrganizationExists(name: string): Promise<boolean | undefined> {
+  try {
+  const organizationFound = await OrganizationModel.findOne({ name: {$eq :name} },{collation:'en', strength: 3});
+   if(organizationFound){
+    return true
+   }
+    else false;
+  } catch (error) {
+    console.error('Error occurred during searching organization:', error);
+    return false;
+  }
+}
+
+// for users
+async function getNamesandCoordenates(): Promise<Organization[]> {
+  try {
+    const organizations = await OrganizationModel.find({}, 'name location locationDelta');
+    return organizations;
+  } catch (error) {
+    throw new Error('An error occurred while fetching organization names and coordinates: ' + error);
+  }
+}
+
 async function getAllOrganization(): Promise<Organization[]> {
   try {
     const organizations = await OrganizationModel.find();
@@ -58,28 +85,7 @@ async function getAllOrganization(): Promise<Organization[]> {
   }
 }
 
-async function deleteOrganization(id: string): Promise<{ deletedCount?: number }> {
-  try {
-    const result = await OrganizationModel.deleteOne({ _id: id });
-    return result;
-  } catch (error) {
-    console.error('Error occurred during deleting organization:', error);
-    throw error;
-  }
-}
-
-async function checkOrganizationExists(name: string): Promise<boolean | undefined> {
-  try {
-    const organizationFound = await OrganizationModel.findOne({ name: {$eq :name} });
-   if(organizationFound){
-    return true
-   }
-    else false;
-  } catch (error) {
-    console.error('Error occurred during searching organization:', error);
-    return false;
-  }
-}
+// for moderators
 
 export {
   getAllOrganization as getAll,

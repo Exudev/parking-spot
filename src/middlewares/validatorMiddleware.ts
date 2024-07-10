@@ -20,4 +20,8 @@ const validateOrganization = [
   },
 ];
 
-export default validateOrganization;
+
+
+export {
+  validateOrganization
+};

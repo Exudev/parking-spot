@@ -7,7 +7,7 @@ import {
   checkOrganizationExists,
   getNamesandCoordinates,
 } from './controller';
-import validateOrganization from '../../middlewares/validatorMiddleware';
+import {validateOrganization} from '../../middlewares/validatorMiddleware';
 
 const organizationRouter = express.Router();
 
