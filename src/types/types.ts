@@ -13,7 +13,7 @@ export interface Organization {
     locationDelta: GeoJSONPoint,
   }
 
-  export interface UserDB {
+  export interface User {
     username: string;
     email: string;
     name: string;
