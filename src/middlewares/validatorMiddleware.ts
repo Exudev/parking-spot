@@ -20,8 +20,24 @@ const validateOrganization = [
   },
 ];
 
+const validateUser = [
+  check('username').notEmpty().withMessage('Username is required'),
+  check('email').notEmpty().withMessage('Email is required'),
+  check('name').notEmpty().withMessage('Name is required'),
+  check('lastname').notEmpty().withMessage('Lastname is required'),
+  check('userType').notEmpty().withMessage('User Type is required'),
+  check('password').notEmpty().withMessage('Password is required'),
+  (req: Request, res: Response, next: NextFunction) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return next(new ValidationError('Invalid input', errors.array()));
+    }
+    next();
+  },
+];
 
 
 export {
-  validateOrganization
+  validateOrganization,
+  validateUser,
 };

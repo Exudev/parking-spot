@@ -24,5 +24,9 @@ async function deleteUser(req: Request, res: Response, next : NextFunction ): Pr
   
 }
 
-
+export {
+  createUser,
+  deleteUser,
+  
+}
 

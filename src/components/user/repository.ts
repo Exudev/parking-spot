@@ -54,7 +54,6 @@ async function getUser(id: string): Promise<User | undefined>{
     }
 }
 
-
 export {
     createUser as createUser,
     deleteUser as deleteUser,
