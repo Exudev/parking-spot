@@ -22,8 +22,14 @@ export interface Organization {
     password: string;
   }
 
+  export interface ParkingLot {
+    name: string;
+    organizationId: string;
+    description: string;
+    location: GeoJSONPoint,
+  }
 export type OrganizationLookup = Pick<Organization, 'name' |'location'>;
-
+export type ParkingLookup = Pick<ParkingLot, 'name' |'location'>;
   
 
 // export type OrderStatus = 'pending' | 'shipped' | 'delivered';
