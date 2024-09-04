@@ -4,7 +4,6 @@ import ParkingLotModel from "./models"
 import { RepositoryError } from '../../utils/errors';
 
 
-
 async function createParkingLot(parkingLot: ParkingLot): Promise<{wasCreated: true}| undefined> {
     try {
       const newParkingLot = new ParkingLotModel(parkingLot);
@@ -13,7 +12,7 @@ async function createParkingLot(parkingLot: ParkingLot): Promise<{wasCreated: tr
   
      if(exists)
       {
-        throw new RepositoryError('exists',409, "already-exists");
+        throw new RepositoryError('exists', "already-exists",409);
       }
   
       const created = await newParkingLot.save();
@@ -23,7 +22,7 @@ async function createParkingLot(parkingLot: ParkingLot): Promise<{wasCreated: tr
           return {wasCreated: true};
         }
     } catch (error) {
-      throw new RepositoryError('server-error',409, error);
+      throw new RepositoryError('server-error',"", 409,error);
     }
 }
 

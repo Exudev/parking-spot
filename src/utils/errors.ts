@@ -2,32 +2,35 @@ import { errorCode } from "../types/types";
 
 class AppError extends Error {
     statusCode: number;
+    errorCode: errorCode;
+    errorMessage: string;
     details: any;
   
-    constructor(message: string, statusCode: number, details?: any) {
-      super(message);
+    constructor( statusCode: number, errorCode : errorCode, errorMessage: string, details?: any) {
+      super(errorCode);
       this.statusCode = statusCode;
+      this.errorCode = errorCode;
+      this.errorMessage = errorMessage;
       this.details = details;
-  
       Error.captureStackTrace(this, this.constructor);
     }
   }
   
   class NotFoundError extends AppError {
-    constructor(message = 'Resource not found', details?: any) {
-      super(message, 404, details);
+    constructor(errorMessage = 'Resource not found', errorCode: errorCode, details?: any) {
+      super(404,errorCode, errorMessage, details);
     }
   }
   
   class ValidationError extends AppError {
-    constructor(message = 'Invalid input', details?: any) {
-      super(message, 400, details);
+    constructor(errorMessage = 'Invalid input', errorCode: errorCode, details?: any) {
+      super(400, errorCode, errorMessage, details);
     }
   }
 
   class RepositoryError extends AppError {
-    constructor(message: errorCode,statusCode: number, details?: any) {
-      super(message, statusCode, details);
+    constructor(errorCode: errorCode, errorMessage: string, statusCode: number, details?: any) {
+      super(statusCode, errorCode,errorMessage , details);
     }
   }
   

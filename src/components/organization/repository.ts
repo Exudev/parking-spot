@@ -12,7 +12,7 @@ async function createOrganization(organization: Organization): Promise<{wasCreat
 
    if(exists)
     {
-      throw new RepositoryError('exists',409, "already-exists");
+      throw new RepositoryError('exists','already-exists',409);
     }
 
     const created = await newOrganization.save();
@@ -22,7 +22,7 @@ async function createOrganization(organization: Organization): Promise<{wasCreat
         return {wasCreated: true};
       }
   } catch (error) {
-    throw new RepositoryError('server-error',409, error);
+    throw new RepositoryError('server-error','server-error',409, error);
   }
 }
 

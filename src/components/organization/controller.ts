@@ -12,11 +12,11 @@ async function createOrganization(req: Request, res: Response, next: NextFunctio
     if (newOrganization) {
       success(req, res, "created" ,"Organization created successfully", 201);
     } else {
-      next(new ValidationError('Failed to create organization'));
+      next(new ValidationError('Failed to create organization','server-error',400));
     }
   } catch (err) {
     console.error('Error creating organization:', err);
-    next(new AppError('error',400 ,err));
+    next(new AppError(400, 'server-error', `Error creating organization` ,err));
   }
 }
 

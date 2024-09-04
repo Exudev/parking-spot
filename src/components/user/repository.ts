@@ -19,7 +19,7 @@ async function createUser(user: User): Promise<{wasCreated: true} | undefined>{
         const exists = await UserModel.findOne({username:{$eq:user.username }},{collation:'en', strength: 3});
         if(exists)
             {
-                throw new RepositoryError('exists',409, "already-exists");
+                throw new RepositoryError('exists', "already-exists",409);
             }
         const created = await UserModel.collection.insertOne(newUserDB);
         if(created){
@@ -28,7 +28,7 @@ async function createUser(user: User): Promise<{wasCreated: true} | undefined>{
             }
         }
     }catch (error){
-        throw new RepositoryError('server-error',409, error);
+        throw new RepositoryError('server-error','server-error', 409, error);
 }
 } 
 
@@ -37,7 +37,7 @@ async function deleteUser(id: string): Promise<{deletedCount?: number}>{
         const result = await UserModel.deleteOne({_id: id});
         return result;
     } catch (error) {
-        throw new RepositoryError('server-error',409, error);
+        throw new RepositoryError('server-error','server-error',409, error);
     }
 }
 async function getUser(id: string): Promise<User | undefined>{
@@ -50,7 +50,7 @@ async function getUser(id: string): Promise<User | undefined>{
             }
           else return undefined;
     } catch (error) {
-        throw new RepositoryError('server-error',409, error);
+        throw new RepositoryError('server-error','server-error',409, error);
     }
 }
 
