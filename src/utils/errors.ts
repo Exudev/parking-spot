@@ -17,13 +17,13 @@ class AppError extends Error {
   }
   
   class NotFoundError extends AppError {
-    constructor(errorMessage = 'Resource not found', errorCode: errorCode, details?: any) {
+    constructor( errorCode: errorCode, errorMessage = 'Resource not found', details?: any) {
       super(404,errorCode, errorMessage, details);
     }
   }
   
   class ValidationError extends AppError {
-    constructor(errorMessage = 'Invalid input', errorCode: errorCode, details?: any) {
+    constructor( errorCode: errorCode, errorMessage = 'Invalid input', details?: any) {
       super(400, errorCode, errorMessage, details);
     }
   }

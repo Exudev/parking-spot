@@ -14,7 +14,7 @@ const validateOrganization = [
   (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return next(new ValidationError('Invalid input','invalid-data' ,errors.array()));
+      return next(new ValidationError('invalid-data' ,'Invalid input',errors.array()));
     }
     next();
   },
@@ -30,7 +30,7 @@ const validateUser = [
   (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return next(new ValidationError('Invalid input', 'invalid-data',errors.array()));
+      return next(new ValidationError('invalid-data', 'Invalid input',errors.array()));
     }
     next();
   },

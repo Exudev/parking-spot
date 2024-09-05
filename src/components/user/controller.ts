@@ -12,7 +12,7 @@ async function createUser(req: Request, res: Response, next: NextFunction): Prom
         if (newUser) {
           success(req, res, "created" ,"user created successfully", 201);
         } else {
-          next(new ValidationError('Failed to create user', 'server-error'));
+          next(new ValidationError('server-error', 'Failed to create user'));
         }
       } catch (err) {
         console.error('Error creating user:', err);

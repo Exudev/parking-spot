@@ -13,7 +13,7 @@ async function createParkingLot(req: Request, res: Response, next: NextFunction)
     if (newParkingLot) {
       success(req, res, "created" ,`created parking Lot for organization ${parkingLot.organizationId}`, 201);
     } else {
-      next(new ValidationError('Failed to create parking Lot','server-error'));
+      next(new ValidationError('server-error', 'Failed to create parking Lot'));
     }
   } catch (err) {
     console.error('Error creating parking lot:', err);
