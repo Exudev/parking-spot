@@ -2,6 +2,8 @@ import { Request, Response , NextFunction} from 'express';
 import { Organization } from '../../types/types';
 import { success, error } from '../../network/response';
 import { AppError, ValidationError } from '../../utils/errors';
+import { json } from 'body-parser';
+import { createOrganizationResponse } from './types';
 const repository = require('./repository');
 
 async function createOrganization(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -9,10 +11,11 @@ async function createOrganization(req: Request, res: Response, next: NextFunctio
     try {
     const organization: Organization = req.body;
     const newOrganization = await repository.add(organization);
-    if (newOrganization) {
-      success(req, res, "created" ,"Organization created successfully", 201);
+    if (newOrganization.type === "response") {
+      success(req, res, "created" ,`organization created with id: ${JSON.stringify(newOrganization.organizationId)}`, 201);
     } else {
-      next(new ValidationError('server-error','Failed to create organization'));
+      console.log('por aqui')
+      next(new ValidationError(newOrganization.errorCode, newOrganization.errorMessage ));
     }
   } catch (err) {
     console.error('Error creating organization:', err);
@@ -63,7 +66,6 @@ async function deleteOrganization(req: Request, res: Response): Promise<void> {
 async function checkOrganizationExists(req: Request, res: Response): Promise<void> {
   try {
     const name: string = req.params.name;
-    console.log(name);
     const exists = await repository.exists(name);
     if (exists) {
       success(req, res, 'fetched','Organization exists', 200);

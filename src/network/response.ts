@@ -13,25 +13,25 @@ type ApiResponse =
         errorMessage: string;
     };
 
-type SuccessResponse = (req: Request, res: Response, responseCode: responseCode, message: string,  status?: number) => void;
-type ErrorResponse = (req: Request, res: Response, errorCode: errorCode, errorMessage: string, status?: number) => void;
+type SuccessResponse = (req: Request, res: Response, responseCode: responseCode, message: string,  statusCode?: number) => void;
+type ErrorResponse = (req: Request, res: Response, errorCode: errorCode, errorMessage: string, statusCode?: number) => void;
 
-export const success: SuccessResponse = (req, res, responseCode, message, status = 200) => {
+export const success: SuccessResponse = (req, res, responseCode, message, statusCode = 200) => {
     console.log(`[response message:] ${message}`);
     const response: ApiResponse = {
         type: 'response',
         responseCode: responseCode,
         response: message,
     };
-    res.status(status).send(response);
+    res.status(statusCode).send(response);
 };
 
-export const error: ErrorResponse = (req, res, errorCode, errorMessage, status = 500) => {
+export const error: ErrorResponse = (req, res, errorCode, errorMessage, statusCode = 500) => {
     console.error(`[response error:] ${errorMessage}`);
     const response: ApiResponse = {
         type: 'error',
         errorCode: errorCode,
         errorMessage: errorMessage,
     };
-    res.status(status).send(response);
+    res.status(statusCode ).send(response);
 };

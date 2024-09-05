@@ -30,8 +30,9 @@ export interface Organization {
   }
 export type OrganizationLookup = Pick<Organization, 'name' |'location'>;
 export type ParkingLookup = Pick<ParkingLot, 'name' |'location'>;
-  
-
+export type BaseResponse = {
+  type: 'response'
+}
 // export type OrderStatus = 'pending' | 'shipped' | 'delivered';
   
 
