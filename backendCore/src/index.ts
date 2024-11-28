@@ -1,22 +1,26 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import "dotenv/config";
-import { MONGO_URI, PORT } from './constants/env';
+import { APP_ORIGIN, MAXRETRYATTEMPTS, MONGO_URI, PORT } from './constants/env';
 import connectDB from './config/mongo';
+import cors from "cors";
 import router from './network/routes';
 import errorMiddleware from './middlewares/errorMiddleware';
 import cookieParser from 'cookie-parser';
-connectDB();
-const app = express();
-app.use(cookieParser());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-router(app);
-app.use(errorMiddleware);
-app.use('/app', express.static('./public'));
 
+const app = express();
+connectDB();
+
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors({origin: APP_ORIGIN, credentials:true}))
+app.use('/app', express.static('./public'));
+app.use(cookieParser());
+app.use(errorMiddleware);
+router(app);
 let retryAttempts = 0;
-const maxRetryAttempts = 7;
+const maxRetryAttempts = Number.parseInt(MAXRETRYATTEMPTS);
 
 function startServer(): void {
   app.listen(PORT, () => {

@@ -14,3 +14,4 @@ export const SALT_ROUNDS = getEnv("SALT_ROUNDS");
 export const DB_USER = getEnv("DB_USER");
 export const DB_PASSWORD = getEnv("DB_PASSWORD");
 export const DB_HOST = getEnv("DB_HOST");
+export const APP_ORIGIN = getEnv("APP_ORIGIN");
