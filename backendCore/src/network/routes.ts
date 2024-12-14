@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import organizationRouter from '../components/organization/network';
+import organizationRouter from '../services/organization/network';
 
-import userRouter from '../components/user/network';
+import userRouter from '../services/user/network';
 
 const routes = (router: Router): void => {
   router.use((req: Request, res: Response, next: NextFunction) => {
