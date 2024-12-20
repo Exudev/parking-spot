@@ -1,6 +1,5 @@
 import { ObjectId } from "mongodb";
 import { errorCode, Organization, User } from "../../types/types";
-import bcrypt from "bcrypt";
 import {
   OrganizationModel,
   OrganizationDBModel,
@@ -21,7 +20,8 @@ import {
   getOrganizationRequest,
   getOrganizationResponse,
 } from "./types";
-import { SALT_ROUNDS } from "@src/constants/env";
+import { SALT_ROUNDS } from "./../../constants/env";
+import { hashValue } from "@src/shared/utils";
 // For Organizations
 
 class OrganizationRepository {
@@ -55,7 +55,7 @@ class OrganizationRepository {
       type: "user",
       email: req.user.email,
     });
-    const hashedPassword = await bcrypt.hash(req.user.password, SALT_ROUNDS);
+    const hashedPassword = hashValue(req.user.password);
     if (!userExists) {
       const user = await this.userCollection.insertOne({
         type: "user",
@@ -124,9 +124,10 @@ class OrganizationRepository {
   ): Promise<getOrganizationResponse> {
     try {
       const objectId = new ObjectId(req.organizationId);
-      const organization = await OrganizationCollection.findOne<OrganizationDBModel>({
-        _id: objectId,
-      }); 
+      const organization =
+        await OrganizationCollection.findOne<OrganizationDBModel>({
+          _id: objectId,
+        });
       if (organization) {
         return {
           type: "response",

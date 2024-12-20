@@ -9,7 +9,9 @@ export interface IUser extends Document {
   name: string;
   lastName: string;
   userType: userType;
+  active: boolean;
   password: string;
+  comparePassword(pass: string): Promise<boolean>;
 }
 const UserSchema = new Schema<IUser>(
   {
@@ -19,12 +21,13 @@ const UserSchema = new Schema<IUser>(
       enum: ["user"],
       default: "user",
     },
-    email: { type: String, required: true },
+    email: { type: String, unique: true, required: true },
     username: { type: String, required: true },
     name: { type: String, required: true },
     lastName: { type: String, required: true },
     userType: { type: String, required: true },
-    password: { type: String, required: true }
+    active: { type: Boolean, required: true, default: false },
+    password: { type: String, required: true },
   },
   { timestamps: true }
 );
@@ -32,25 +35,23 @@ UserSchema.index(
   { type: 1, name: 1 },
   { collation: { locale: "en", strength: 3 } }
 );
-export interface IVerificationCode  extends Document {
-  userId: mongoose.Types.ObjectId
+export interface IVerificationCode extends Document {
+  userId: mongoose.Types.ObjectId;
   type: VerificationCodeType;
-  expiresAt:Date;
-  createdAt:Date;
+  expiresAt: Date;
+  createdAt: Date;
 }
 const VerificationCodeSchema = new Schema<IVerificationCode>(
   {
     userId: {
       type: Schema.ObjectId,
-ref: 'UserId',
-
+      ref: "UserId",
     },
     type: { type: String, required: true },
     expiresAt: { type: Date, required: true },
-    createdAt: { type: Date, required: true }
+    createdAt: { type: Date, required: true },
   },
   { timestamps: true }
 );
 export const UserModel = model<IUser>("User", UserSchema);
 export const UserCollection = UserModel.collection;
-                                                                                                       

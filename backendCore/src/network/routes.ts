@@ -14,6 +14,11 @@ const routes = (router: Router): void => {
 
   router.use('/', organizationRouter);
   router.use('/',userRouter )
+  router.get('/health',(req,res)=>{
+    res.status(200).json({
+      status: "healthy"
+    })
+  } )
   
 };
 

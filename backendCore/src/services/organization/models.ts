@@ -12,6 +12,9 @@ export type OrganizationDBModel = {
     type: 'Point';
     coordinates: [number, number];
   };
+  settings : {
+    owner : string,
+  }
   owner: string;
   createdAt: Date;
   updatedAt: Date;
@@ -148,6 +151,6 @@ ParkingSchema.index(
 );
 
 export const OrganizationModel = model('Organization', OrganizationSchema, 'organization');
-export const ParkingLotModel = model('Organization', ParkingLotSchema, 'organization');
-export const ParkingModel = model('Organization', ParkingSchema, 'organization');
+export const ParkingLotModel = model('ParkingLot', ParkingLotSchema, 'organization');
+export const ParkingModel = model('Parking', ParkingSchema, 'organization');
 export const OrganizationCollection = OrganizationModel.collection;

@@ -1,11 +1,8 @@
 import { ObjectId } from 'mongodb';
+import bcrypt from "bcrypt";
+import { SALT_ROUNDS } from '@src/constants/env';
 
-/**
- * Valida si un valor es convertible a un ObjectId de MongoDB.
- * @param value - El valor a validar.
- * @returns true si el valor es convertible a un ObjectId, false en caso contrario.
- */
-export function isValidObjectId(value: any): boolean {
+export function isValidObjectId(value: string): boolean {
     try {
         new ObjectId(value);
         return true;
@@ -14,22 +11,20 @@ export function isValidObjectId(value: any): boolean {
     }
 }
 
-/**
- * Valida si un correo electrónico es válido.
- * @param email - El correo electrónico a validar.
- * @returns true si el correo electrónico es válido, false en caso contrario.
- */
 export function isValidEmail(email: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 }
 
-/**
- * Valida si un número de teléfono es válido.
- * @param phoneNumber - El número de teléfono a validar.
- * @returns true si el número de teléfono es válido, false en caso contrario.
- */
 export function isValidPhoneNumber(phoneNumber: string): boolean {
     const phoneRegex = /^[0-9]+$/;
     return phoneRegex.test(phoneNumber);
+}
+
+export const hashValue = async (value: string) => {
+    bcrypt.hash(value, SALT_ROUNDS);
+}
+
+export const compareValue = async (value: string, hashedValue: string)=>{
+    bcrypt.compare(value,hashedValue).catch(()=> false);
 }

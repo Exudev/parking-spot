@@ -3,6 +3,9 @@
 import { check, validationResult } from 'express-validator';
 import { Request, Response, NextFunction } from 'express';
 import { ValidationError } from '../utils/errors';
+import z from "zod";
+
+// TODO:  change to zod
 
 const validateCreateOrganization = [
   check('organization.organizationId').notEmpty().withMessage('Organization ID is required'),
@@ -27,6 +30,38 @@ const validateCreateOrganization = [
   },
 ];
 
+
+const createOrganizationRequestSchema = z.object({
+  organization: z.object({
+    organizationId : z.string().min(1).max(40),
+    name: z.string().min(3).max(70),
+    location: z.object({
+     type: z.literal("Point"),
+     coordinates: z.array(z.number()).length(2,"expecting coordinates are exactly 2 numbers")
+    }),
+    locationDelta: z.object({
+      type: z.literal("Point"),
+      coordinates: z.array(z.number()).length(2,"expecting coordinates are exactly 2 numbers")
+     }),
+     settings: z.object({
+        owner: z.string().min(1).max(255),
+     }),   
+  }),
+  user: z.object({
+    email:z.string().min(1).max(255),
+    username:z.string().min(1).max(255),
+    name:z.string().min(1).max(25),
+    lastname: z.string().min(1).max(25),
+    userType: z.enum(["user","owner","moderator","admin"]),
+    password: z.string(),
+   confirmPassword: z.string(),
+
+  }),
+  
+}).refine((data)=> data.user.password === data.user.confirmPassword,{
+  message: "Passwords do not match",
+  path:["confirmPassword"]
+});
 const validateUser = [
   check('email').notEmpty().withMessage('Email is required'),
   check('username').notEmpty().withMessage('Username is required'),

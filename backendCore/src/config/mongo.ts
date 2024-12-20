@@ -1,7 +1,6 @@
 import { DB_HOST, DB_PASSWORD, DB_USER } from "../constants/env";
 import mongoose from "mongoose";
 
-mongoose.Promise = global.Promise;
 
 async function connect(): Promise<void> {
   try {
