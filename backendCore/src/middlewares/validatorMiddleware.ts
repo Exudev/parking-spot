@@ -7,46 +7,30 @@ import z from "zod";
 
 // TODO:  change to zod
 
-const validateCreateOrganization = [
-  check('organization.organizationId').notEmpty().withMessage('Organization ID is required'),
-  check('organization.name').notEmpty().withMessage('Name is required'),
-  check('organization.location.coordinates')
-    .isArray({ min: 2, max: 2 })
-    .withMessage('Coordinates error')
-    .custom((value) => value.every((num: number) => typeof num === 'number'))
-    .withMessage('Coordinates must be numbers'),
-    check('user.email').notEmpty().withMessage('Email is required'),
-    check('user.username').notEmpty().withMessage('Username is required'),
-    check('user.name').notEmpty().withMessage('Name is required'),
-    check('user.lastName').notEmpty().withMessage('Lastname is required'),
-    check('user.userType').notEmpty().withMessage('User Type is required'),
-    check('user.password').notEmpty().withMessage('Password is required'),
-  (req: Request, res: Response, next: NextFunction) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return next(new ValidationError('invalid-data' ,'Invalid input',errors.array()));
+
+
+const validateBodyRequest = (schema:z.ZodSchema )=>{
+  return (req: Request, res: Response, next: NextFunction) => {
+    try {
+      schema.parse(req.body);
+      next();      
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({
+          errors: error.errors.map((e) => ({
+            path: e.path.join('.'),
+            message: e.message,
+          })),
+        });
+      } else {
+        next(error); 
+      }
     }
-    next();
-  },
-];
+  }
+}
 
 
-const createOrganizationRequestSchema = z.object({
-  organization: z.object({
-    organizationId : z.string().min(1).max(40),
-    name: z.string().min(3).max(70),
-    location: z.object({
-     type: z.literal("Point"),
-     coordinates: z.array(z.number()).length(2,"expecting coordinates are exactly 2 numbers")
-    }),
-    locationDelta: z.object({
-      type: z.literal("Point"),
-      coordinates: z.array(z.number()).length(2,"expecting coordinates are exactly 2 numbers")
-     }),
-     settings: z.object({
-        owner: z.string().min(1).max(255),
-     }),   
-  }),
+export const createOrganizationRequestSchema = z.object({
   user: z.object({
     email:z.string().min(1).max(255),
     username:z.string().min(1).max(255),
@@ -57,6 +41,16 @@ const createOrganizationRequestSchema = z.object({
    confirmPassword: z.string(),
 
   }),
+    organizationId : z.string().min(1).max(40),
+    name: z.string().min(3).max(70),
+    location: z.object({
+     type: z.literal("Point"),
+     coordinates: z.array(z.number()).length(2,"expecting coordinates are exactly 2 numbers")
+    }),
+    locationDelta: z.object({
+      type: z.literal("Point"),
+      coordinates: z.array(z.number()).length(2,"expecting coordinates are exactly 2 numbers")
+     }),
   
 }).refine((data)=> data.user.password === data.user.confirmPassword,{
   message: "Passwords do not match",
@@ -80,7 +74,5 @@ const validateUser = [
 
 
 export {
-  validateCreateOrganization as validateOrganization,
-  validateUser,
+validateBodyRequest
 };
-validateCreateOrganization

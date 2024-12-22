@@ -7,6 +7,7 @@ import { RepositoryError } from "../../utils/errors";
 import { User, userType } from "../../types/types";
 import { createUserRequest, loginRequest, loginResponse } from "./types";
 
+import { compareValue } from "../../shared/utils";
 class UserRepository {
   private userCollection = UserCollection;
 
@@ -26,7 +27,7 @@ class UserRepository {
       const newUserDB = {
         email: req.user.email,
         name: req.user.name,
-        lastName: req.user.lastName,
+        lastName: req.user.lastname,
         userType: req.user.userType,
         password: hashedPassword,
         username: req.user.username,
@@ -43,8 +44,10 @@ class UserRepository {
   public async login(req: loginRequest): Promise<loginResponse> {
     try {
       const user = await this.userCollection.findOne({
-        username: { $eq: req.username },
+        type: "user",
+        email: { $eq: req.username },
       });
+      console.log(user);
       if (!user) {
         return {
           type: "error",
@@ -55,6 +58,7 @@ class UserRepository {
       }
 
       const auth = await bcrypt.compare(req.password, user.password);
+      console.log(auth);
       if (!auth) {
         return {
           type: "error",

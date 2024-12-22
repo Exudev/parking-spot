@@ -1,7 +1,6 @@
 import { ObjectId } from 'mongodb';
 import bcrypt from "bcrypt";
-import { SALT_ROUNDS } from '@src/constants/env';
-
+import { SALT_ROUNDS } from '../constants/env';
 export function isValidObjectId(value: string): boolean {
     try {
         new ObjectId(value);
@@ -21,10 +20,13 @@ export function isValidPhoneNumber(phoneNumber: string): boolean {
     return phoneRegex.test(phoneNumber);
 }
 
-export const hashValue = async (value: string) => {
-    bcrypt.hash(value, SALT_ROUNDS);
+export const hashValue = async (value: string): Promise<string> => {
+    const saltRounds = Number.parseInt(SALT_ROUNDS, 10);
+    const hashedValue = await bcrypt.hash(value, saltRounds);
+    return hashedValue;
 }
 
-export const compareValue = async (value: string, hashedValue: string)=>{
-    bcrypt.compare(value,hashedValue).catch(()=> false);
+export const compareValue = async (value: string, hashedValue: string) : Promise<boolean>=>{
+   const valid = await bcrypt.compare(value,hashedValue).catch(()=> false);
+   return valid;
 }

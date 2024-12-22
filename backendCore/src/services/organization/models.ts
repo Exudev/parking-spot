@@ -83,7 +83,10 @@ const OrganizationSchema = new Schema<OrganizationDBModel>(
         },
       },
     },
-    owner: { type: String, required: true, trim: true },
+    settings:{
+          owner: { type: String, required: true, trim: true },
+    }
+
   },
   { timestamps: true }
 );

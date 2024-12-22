@@ -11,19 +11,23 @@ interface GeoJSONPoint {
   coordinates: [number, number];
 }
 
+interface OrganizationSettings {
+  owner : string;
+}
+
 export interface Organization {
   organizationId : string;
   name: string;
-  owner: string;
   location: GeoJSONPoint;
   locationDelta: GeoJSONPoint;
+  settings : OrganizationSettings; 
 }
 
 export interface User {
-  username: string;
+  username: string; 
   email: string;
   name: string;
-  lastName: string;
+  lastname: string;
   userType: userType; //change
   password: string;
 }

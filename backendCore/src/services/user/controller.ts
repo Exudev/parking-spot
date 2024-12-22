@@ -32,32 +32,29 @@ async function deleteUser(
 async function login(
   req: Request,
   res: Response,
-  next: NextFunction
 ): Promise<void> {
   try {
-    const username = req.body.username;
+    const email = req.body.email;
     const password = req.body.password;
-    const loginN = await userRepository.login({
+    const auth = await userRepository.login({
       type: "request",
       password: password,
-      username: username,
+      username: email,
     });
-    if (loginN.type !== "response") {
-      next(new AppError("error", 400, loginN.errorCode, loginN.errorMessage));
+    if (auth.type !== "response") {
+      error(req, res, auth.errorCode, auth.errorMessage, auth.statusCode);
     }
-    if (loginN.type === "response") {
-      res.cookie("access_token", loginN.token, {
+    if (auth.type === "response") {
+      res.cookie("access_token", auth.token, {
         httpOnly: true,
         maxAge: 1000 * 60 * 60,
         sameSite: "strict",
       });
       success(req, res, "created", "successfully login", 201);
-    } else {
-      next(new ValidationError("server-error", "Failed to login user"));
     }
   } catch (err) {
     console.error("Error creating user:", err);
-    next(new AppError("error", 400, "server-error", "server-error", err));
+    error(req, res, "server-error", "server-error", 500);
   }
 }
 export { createUser, deleteUser, login };

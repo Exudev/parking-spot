@@ -1,4 +1,4 @@
-import { BaseRequest, BaseResponse, Organization, OrganizationLookup, User } from "../../types/types"
+import { BaseRequest, BaseResponse, Organization, OrganizationLookup, ParkingLot, User } from "../../types/types"
 import { RepositoryError } from "../../utils/errors";
 
 export type createOrganizationRequest = BaseRequest & {
@@ -32,23 +32,21 @@ exists: boolean;
 } | RepositoryError;
 
 export type getNamesandCoordenatesRequest = BaseRequest & {
-  organizationId: string;
 }
 export type getNamesandCoordenatesResponse =  BaseResponse &{
-organizations:OrganizationLookup[];        //array
+organizations:OrganizationLookup[];
 } | RepositoryError;
 
-export type getAllOrganizationRequest = BaseRequest & {
-  organizationId: string;
-}
+export type getAllOrganizationRequest = BaseRequest 
 export type getAllOrganizationResponse =  BaseResponse &{
 organizations:Organization[];
 } | RepositoryError;
 
 export type addParkingLotRequest = BaseRequest & {
   organizationId: string;
+  parkingLot:ParkingLot;
 }
-export type gaddParkingLotResponse =  BaseResponse &{
-
+export type addParkingLotResponse =  BaseResponse &{
+  success: boolean;
 } | RepositoryError;
 

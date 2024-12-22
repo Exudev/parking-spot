@@ -3,45 +3,47 @@ import { Organization, User } from "../../types/types";
 import { success, error } from "../../network/response";
 import { AppError, RepositoryError, ValidationError } from "../../utils/errors";
 import { createOrganizationRequest } from "./types";
-const repository = require("./repository");
+import OrganizationRepository from "./repository";
 
-async function createOrganization(
-  req: Request,
-  res: Response,
-): Promise<void> {
+async function createOrganization(req: Request, res: Response): Promise<void> {
   try {
-    const organization: Organization = req.body.organization;
+    const { organizationId, name, location, locationDelta } = req.body;
     const user: User = req.body.user;
     const request: createOrganizationRequest = {
-      type:"request",
-      organization: organization,
+      type: "request",
+      organization: {
+        organizationId: organizationId,
+        name: name,
+        settings: {
+          owner: user.email,
+        },
+        location: location,
+        locationDelta: locationDelta,
+      },
       user: user,
     };
-    const newOrganization = await repository.add(request);
-    console.log(newOrganization)
+    const newOrganization = await OrganizationRepository.createOrganization(
+      request
+    );
     if (newOrganization.type === "response") {
-      success(
-        req,
-        res,
-        "created",
-        `organization created with id: ${JSON.stringify(
-          newOrganization.organizationId
-        )}`,
-        201
-      );
-    } 
+      success(req, res, "created", { newOrganization }, 201);
+    } else {
+      error(req, res, "exists", "already-exists", 500);
+    }
   } catch (err) {
     console.error("Error creating organization:", err);
-  
   }
 }
 
 async function getOrganization(req: Request, res: Response): Promise<void> {
   try {
     const organizationId: string = req.params.id;
-    const organization = await repository.getOne(organizationId);
+    const organization = await OrganizationRepository.getOrganization({
+      type: "request",
+      organizationId: organizationId,
+    });
     if (organization) {
-      success(req, res, "fetched", JSON.stringify(organization), 200);
+      success(req, res, "fetched", {organization}, 200);
     } else {
       error(req, res, "invalid-data", "Organization not found", 404);
     }
@@ -53,8 +55,10 @@ async function getOrganization(req: Request, res: Response): Promise<void> {
 
 async function getAllOrganizations(req: Request, res: Response): Promise<void> {
   try {
-    const organizations = await repository.getAll();
-    success(req, res, organizations, "fetched", 200);
+    const organizations = await OrganizationRepository.getAllOrganization({
+      type: "request",
+    });
+    success(req, res, "fetched", {organizations}, 200);
   } catch (err) {
     console.error("Error fetching organizations:", err);
     error(req, res, "server-error", "Internal server error", 500);
@@ -64,8 +68,11 @@ async function getAllOrganizations(req: Request, res: Response): Promise<void> {
 async function deleteOrganization(req: Request, res: Response): Promise<void> {
   try {
     const organizationId: string = req.params.id;
-    const result = await repository.delete(organizationId);
-    if (result.deletedCount) {
+    const result = await OrganizationRepository.deleteOrganization({
+      type: "request",
+      organizationId: organizationId,
+    });
+    if (result.type === "response") {
       success(req, res, "deleted", "Organization deleted successfully", 200);
     } else {
       error(req, res, "invalid-data", "Organization not found", 404);
@@ -82,7 +89,10 @@ async function checkOrganizationExists(
 ): Promise<void> {
   try {
     const name: string = req.params.name;
-    const exists = await repository.exists(name);
+    const exists = await OrganizationRepository.checkOrganizationExists({
+      type: "request",
+      organizationId: name,
+    });
     if (exists) {
       success(req, res, "fetched", "Organization exists", 200);
     } else {
@@ -99,7 +109,9 @@ async function getNamesandCoordinates(
   res: Response
 ): Promise<void> {
   try {
-    const organizations = await repository.getAllCoordenates();
+    const organizations = await OrganizationRepository.getNamesandCoordenates({
+      type: "request",
+    });
     success(req, res, "fetched", JSON.stringify(organizations), 200);
   } catch (err) {
     console.error("Error fetching organization names and coordinates:", err);

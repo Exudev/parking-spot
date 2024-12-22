@@ -7,11 +7,11 @@ import {
   checkOrganizationExists,
   getNamesandCoordinates,
 } from './controller';
-import {validateOrganization} from '../../middlewares/validatorMiddleware';
+import {createOrganizationRequestSchema, validateBodyRequest} from '../../middlewares/validatorMiddleware';
 
 const organizationRouter = express.Router();
 
-organizationRouter.post('/organization', validateOrganization,createOrganization);//checked
+organizationRouter.post('/organization', validateBodyRequest(createOrganizationRequestSchema), createOrganization);//checked
 organizationRouter.get('/organization-all', getAllOrganizations); //checked
 organizationRouter.get('/organization-info/', getNamesandCoordinates);
 organizationRouter.delete('/organization/:id', deleteOrganization);

@@ -5,7 +5,7 @@ type ApiResponse =
     | {
         type: "response" | "info";
         responseCode: responseCode;
-        response: string;
+        data:  Record<string,any> | string;
     }
     | {
         type: "error";
@@ -13,15 +13,15 @@ type ApiResponse =
         errorMessage: string;
     };
 
-type SuccessResponse = (req: Request, res: Response, responseCode: responseCode, message: string,  statusCode?: number) => void;
+type SuccessResponse = (req: Request, res: Response, responseCode: responseCode, data: Record<string,any> | string,  statusCode?: number) => void;
 type ErrorResponse = (req: Request, res: Response, errorCode: errorCode, errorMessage: string, statusCode?: number) => void;
 
-export const success: SuccessResponse = (req, res, responseCode, message, statusCode = 200) => {
-    console.log(`[response message:] ${message}`);
+export const success: SuccessResponse = (req, res, responseCode, data, statusCode = 200) => {
+    console.log(`[response message:] ${data}`);
     const response: ApiResponse = {
         type: 'response',
         responseCode: responseCode,
-        response: message,
+        data: data,
     };
     res.status(statusCode).send(response);
 };

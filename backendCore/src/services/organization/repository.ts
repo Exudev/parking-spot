@@ -7,6 +7,8 @@ import {
 } from "./models";
 import { UserCollection, UserModel } from "../user/models";
 import {
+  addParkingLotRequest,
+  addParkingLotResponse,
   checkOrganizationExistsRequest,
   checkOrganizationExistsResponse,
   createOrganizationRequest,
@@ -21,7 +23,7 @@ import {
   getOrganizationResponse,
 } from "./types";
 import { SALT_ROUNDS } from "./../../constants/env";
-import { hashValue } from "@src/shared/utils";
+import { hashValue } from "../../shared/utils";
 // For Organizations
 
 class OrganizationRepository {
@@ -35,7 +37,7 @@ class OrganizationRepository {
       type: "organization",
       organizationId: { $eq: req.organization.organizationId },
     });
-    if (exists) {
+    if (exists?._id) {
       return {
         type: "error",
         errorCode: "exists",
@@ -49,20 +51,20 @@ class OrganizationRepository {
       name: req.organization.name,
       location: req.organization.location,
       locationDelta: req.organization.locationDelta,
-      owner: req.user.email,
+      settings: req.organization.settings,
     });
     const userExists = await this.userCollection.findOne({
       type: "user",
       email: req.user.email,
     });
-    const hashedPassword = hashValue(req.user.password);
     if (!userExists) {
+      const hashedPassword = await hashValue(req.user.password);
       const user = await this.userCollection.insertOne({
         type: "user",
         email: req.user.email,
         username: req.user.username,
         name: req.user.name,
-        lastName: req.user.lastName,
+        lastName: req.user.lastname,
         userType: req.user.userType,
         password: hashedPassword,
       });
@@ -75,8 +77,7 @@ class OrganizationRepository {
         };
       }
     }
-
-    if (createOrg) {
+    if (createOrg.insertedId) {
       return {
         type: "response",
         organizationId: String(createOrg.insertedId),
@@ -134,7 +135,7 @@ class OrganizationRepository {
           organization: {
             organizationId: organization.organizationId,
             name: organization.name,
-            owner: organization.owner,
+           settings: organization.settings,
             location: organization.location,
             locationDelta: organization.locationDelta,
           },
@@ -219,11 +220,11 @@ class OrganizationRepository {
       };
     }
   }
-  // public async addParkingLot(
-  //   req: any
-  // ): Promise<>{
+//   public async addParkingLot(
+//     req: addParkingLotRequest
+//   ): Promise<addParkingLotResponse>{
 
-  // }
+//   }
 }
 
 export default new OrganizationRepository();
