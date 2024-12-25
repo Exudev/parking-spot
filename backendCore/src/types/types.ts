@@ -32,6 +32,8 @@ export interface User {
   password: string;
 }
 
+export type UserSafe = Omit<User, "password">
+
 export interface ParkingLot {
   name: string;
   organizationId: string;

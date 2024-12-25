@@ -5,7 +5,7 @@ import { SALT_ROUNDS, SECRET_KEY_JWT } from "../../constants/env";
 import { UserModel, UserCollection } from "./models";
 import { RepositoryError } from "../../utils/errors";
 import { User, userType } from "../../types/types";
-import { createUserRequest, loginRequest, loginResponse } from "./types";
+import { createUserRequest, findByEmailResponse, loginRequest, loginResponse } from "./types";
 
 import { compareValue } from "../../shared/utils";
 class UserRepository {
@@ -57,7 +57,7 @@ class UserRepository {
         };
       }
 
-      const auth = await bcrypt.compare(req.password, user.password);
+      const auth = await compareValue(req.password,user.password);
       console.log(auth);
       if (!auth) {
         return {
@@ -94,6 +94,37 @@ class UserRepository {
       const objectId = new ObjectId(id);
       const user = await UserModel.findById(objectId).exec();
       return user || undefined;
+    } catch (error) {
+      throw new RepositoryError("server-error", "server-error", 500, error);
+    }
+  }
+
+  public async findByEmail(email: string): Promise<findByEmailResponse> {
+    try {
+      const user = await this.userCollection.findOne({
+      type:"user",
+      email: {$eq: email}
+      });
+      if(!user || user.type !== "user"){
+        return {
+          type:"error",
+          errorCode:"not-found",
+          errorMessage:"user-not-found",
+          statusCode:404,
+
+        }
+      }
+      return {
+        type:"response",
+        user:{
+          username: user.username,
+          email: user.email,
+          name: user.name,
+          lastname: user.lastName,
+          userType: "user",
+          password:user.password,
+        }
+      }
     } catch (error) {
       throw new RepositoryError("server-error", "server-error", 500, error);
     }

@@ -7,6 +7,7 @@ import cors from "cors";
 import router from './network/routes';
 import errorMiddleware from './middlewares/errorMiddleware';
 import cookieParser from 'cookie-parser';
+import passport from 'passport';
 
 const app = express();
 connectDB();
@@ -15,9 +16,11 @@ connectDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({origin: APP_ORIGIN, credentials:true}))
+require("./utils/auth")
 app.use('/app', express.static('./public'));
 app.use(cookieParser());
 app.use(errorMiddleware);
+app.use(passport.initialize());
 router(app);
 let retryAttempts = 0;
 const maxRetryAttempts = Number.parseInt(MAXRETRYATTEMPTS);

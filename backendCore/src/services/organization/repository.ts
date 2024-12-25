@@ -70,7 +70,7 @@ class OrganizationRepository {
       });
       if (!user.insertedId) {
         return {
-          type: "error",
+          type: "error",  
           errorCode: "server-error",
           errorMessage: "error-creating-user",
           statusCode: 500,

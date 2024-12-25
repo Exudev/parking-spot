@@ -1,4 +1,4 @@
-import { BaseRequest, BaseResponse, Organization, OrganizationLookup, User } from "../../types/types"
+import { BaseRequest, BaseResponse, Organization, OrganizationLookup, User, UserSafe } from "../../types/types"
 import { RepositoryError } from "../../utils/errors";
 
 export const enum VerificationCodeType {
@@ -23,3 +23,7 @@ export type loginResponse = BaseResponse &{
 token: string;
   }  | RepositoryError;
   
+  export type findByEmailResponse = BaseResponse &{
+    user: User,
+      }  | RepositoryError;
+      
