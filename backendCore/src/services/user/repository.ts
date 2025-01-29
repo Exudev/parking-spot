@@ -4,10 +4,11 @@ import jwt from "jsonwebtoken";
 import { SALT_ROUNDS, SECRET_KEY_JWT } from "../../constants/env";
 import { UserModel, UserCollection } from "./models";
 import { RepositoryError } from "../../utils/errors";
-import { User, userType } from "../../types/types";
+import { User,  } from "../../types/types";
 import { createUserRequest, findByEmailResponse, loginRequest, loginResponse } from "./types";
 
-import { compareValue } from "../../shared/utils";
+import { compareValue, signToken,  } from "../../shared/utils";
+import { permission } from "process";
 class UserRepository {
   private userCollection = UserCollection;
 
@@ -28,7 +29,7 @@ class UserRepository {
         email: req.user.email,
         name: req.user.name,
         lastName: req.user.lastname,
-        userType: req.user.userType,
+        permission: req.user.permissions,
         password: hashedPassword,
         username: req.user.username,
       };
@@ -68,19 +69,15 @@ class UserRepository {
         };
       }
 
-      const token = jwt.sign(
-        { email: user.email, username: user.username, userType: user.userType },
-        SECRET_KEY_JWT,
-        { expiresIn: "1h" }
-      );
+      const token = signToken(user.email,user.username, user.userType,user.organizationId)
 
       return { type: "response", token };
     } catch (error) {
       throw new RepositoryError("server-error", "server-error", 500, error);
     }
   }
-
-  public async deleteUser(id: string): Promise<{ deletedCount?: number }> {
+                                                                                                                          
+   public async deleteUser(id: string): Promise<{ deletedCount?: number }> {
     try {
       const result = await UserModel.deleteOne({ _id: new ObjectId(id) });
       return result;
@@ -89,15 +86,18 @@ class UserRepository {
     }
   }
 
-  public async getUser(id: string): Promise<User | undefined> {
-    try {
-      const objectId = new ObjectId(id);
-      const user = await UserModel.findById(objectId).exec();
-      return user || undefined;
-    } catch (error) {
-      throw new RepositoryError("server-error", "server-error", 500, error);
-    }
-  }
+  // public async getUser(id: string): Promise<User | undefined> {
+  //   try {
+  //     const objectId = new ObjectId(id);
+  //     const findinguser = await UserModel.findById(objectId).exec();
+
+  //     return {
+      
+  //     };
+  //   } catch (error) {
+  //     throw new RepositoryError("server-error", "server-error", 500, error);
+  //   }
+  // }
 
   public async findByEmail(email: string): Promise<findByEmailResponse> {
     try {
@@ -121,7 +121,7 @@ class UserRepository {
           email: user.email,
           name: user.name,
           lastname: user.lastName,
-          userType: "user",
+          permissions: user.permission,
           password:user.password,
         }
       }

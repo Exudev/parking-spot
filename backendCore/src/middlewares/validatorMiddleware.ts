@@ -5,7 +5,7 @@ import { Request, Response, NextFunction } from 'express';
 import { ValidationError } from '../utils/errors';
 import z from "zod";
 
-// TODO:  change to zod
+// TODO: this needs to validate the whole Request not just the body. 
 
 
 

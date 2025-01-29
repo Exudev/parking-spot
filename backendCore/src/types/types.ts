@@ -5,7 +5,7 @@ export type errorCode =
   | "invalid-data"
   | "not-found";
 export type responseCode = "created" | "updated" | "fetched" | "deleted";
-export type userType = "user" | "admin" | "owner" | "moderator";
+export type permissionType = "admin"|"moderator"|"genin";
 interface GeoJSONPoint {
   type: "Point";
   coordinates: [number, number];
@@ -28,8 +28,15 @@ export interface User {
   email: string;
   name: string;
   lastname: string;
-  userType: userType; //change
+  permissions: permissionType; //change
   password: string;
+}
+
+export interface publicProfile {
+  username: string; 
+  email: string;
+  name: string;
+  lastname: string;
 }
 
 export type UserSafe = Omit<User, "password">

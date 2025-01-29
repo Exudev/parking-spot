@@ -65,7 +65,7 @@ class OrganizationRepository {
         username: req.user.username,
         name: req.user.name,
         lastName: req.user.lastname,
-        userType: req.user.userType,
+        permission: req.user.permissions,
         password: hashedPassword,
       });
       if (!user.insertedId) {

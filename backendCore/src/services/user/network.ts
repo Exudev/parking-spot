@@ -9,15 +9,10 @@ import passport = require("passport");
 
 const userRouter = express.Router();
 userRouter.post('/login',
-    passport.authenticate('local', {session: false}),
-    async (req,res,next) => {
-        try {
-            res.json(req.user)
-        } catch (error) {
-            next(error)
-        }
-    }
+   login
 )
 userRouter.post('/user',createUser);
 userRouter.delete('/user/:id',deleteUser);
 export default userRouter;
+
+// passport.authenticate('jwt',{session:false})

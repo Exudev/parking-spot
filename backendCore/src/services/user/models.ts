@@ -1,5 +1,5 @@
 import mongoose, { Schema, model, Document } from "mongoose";
-import { userType } from "../../types/types";
+import { permissionType } from "../../types/types";
 import { VerificationCodeType } from "./types";
 
 export interface IUser extends Document {
@@ -8,7 +8,7 @@ export interface IUser extends Document {
   username: string;
   name: string;
   lastname: string;
-  userType: userType;
+  permission: permissionType;
   active: boolean;
   password: string;
   comparePassword(pass: string): Promise<boolean>;
@@ -25,7 +25,12 @@ const UserSchema = new Schema<IUser>(
     username: { type: String, required: true },
     name: { type: String, required: true },
     lastname: { type: String, required: true },
-    userType: { type: String, required: true },
+    permission:{
+      type: String,
+      required: true,
+      enum: ["admin", "moderator","genin"],
+      default: "moderator",
+    },
     active: { type: Boolean, required: true, default: false },
     password: { type: String, required: true },
   },
