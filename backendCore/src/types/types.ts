@@ -25,11 +25,13 @@ export interface Organization {
 
 export interface User {
   username: string; 
+  organizationId:string;
   email: string;
   name: string;
   lastname: string;
   permissions: permissionType; //change
   password: string;
+  role:string,
 }
 
 export interface publicProfile {
@@ -38,6 +40,13 @@ export interface publicProfile {
   name: string;
   lastname: string;
 }
+
+export type AccountOrganizationToken ={
+    username: string,
+    permission: string,
+    organizationId:string, 
+}
+
 
 export type UserSafe = Omit<User, "password">
 
@@ -50,11 +59,15 @@ export interface ParkingLot {
 export type OrganizationLookup = Pick<Organization, "name" | "location"| "locationDelta">;
 export type ParkingLookup = Pick<ParkingLot, "name" | "location">;
 export type ResponseType = "response"  | "info"  | "error";
+export type WithoutAuthRequest = {
+type: "request";
+
+};  
 export type BaseResponse = {
   type: "response";
 };
 export type BaseRequest = {
   type: "request";
-  // this needs auth
+ // account: ;
 };
 

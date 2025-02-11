@@ -3,10 +3,11 @@ import UserRepository from "../../../services/user/repository"
 import { compareValue } from "../../../shared/utils";
 
 export const localStrategy = new LocalStrategy(
-    { usernameField: 'email', passwordField: 'password' }, // Configuración personalizada
+    { usernameField: 'email', passwordField: 'password' }, 
     async (email: string, password_check: string, done) => {
       try {
         const user = await UserRepository.findByEmail(email);
+      //  console.log(user);
         if (user.type === 'error') {
           return done(user.errorCode, false);
         } else if (user.type === 'response') {
@@ -14,7 +15,7 @@ export const localStrategy = new LocalStrategy(
           if (!auth) {
             return done('forbidden', false);
           }
-          const { password, ...safeUser } = user.user;
+          const { password,name,lastname, ...safeUser } = user.user;
           return done(undefined,safeUser);
         }
       } catch (error) {

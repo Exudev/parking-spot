@@ -3,6 +3,9 @@
     /* Projects */
     // Incremental compilation can be added if needed.
 
+    "typeRoots": ["./node_modules/@types", "./src/types"],
+    "types": ["node", "express", "passport"],
+
     /* Language and Environment */
     "target": "es2017",                                  /* Updated to support modern JavaScript features while maintaining compatibility. */
     "module": "commonjs",                                /* CommonJS is suitable for Node.js projects. */
@@ -33,6 +36,6 @@
       "@src/*": ["src/*"]
     }
   },
-  "include": ["src/", "test"],                  /* Fixed typo and included the correct directories. */
+  "include": ["src/", "test","src/types/**/*.d.ts"],                  /* Fixed typo and included the correct directories. */
   "exclude": ["node_modules"]                            /* Excludes the node_modules directory. */
 }

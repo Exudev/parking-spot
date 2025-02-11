@@ -123,12 +123,15 @@ class UserRepository {
           lastname: user.lastName,
           permissions: user.permission,
           password:user.password,
+          role:"admin",
+          organizationId:user.organizationId
         }
       }
     } catch (error) {
       throw new RepositoryError("server-error", "server-error", 500, error);
     }
   }
+  
 }
 
 export default new UserRepository();

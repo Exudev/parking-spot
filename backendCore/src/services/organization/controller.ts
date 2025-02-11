@@ -119,6 +119,24 @@ async function getNamesandCoordinates(
   }
 }
 
+async function addParkingLot(
+  req: Request,
+  res: Response
+): Promise<void> {
+  try {
+    const { organizationId, parkingLot} = req.body;
+    const creatingParkingLot = await OrganizationRepository.addParkingLot({
+      type: "request",
+      organizationId:organizationId,
+      parkingLot: parkingLot,
+    });
+    success(req, res, "created", JSON.stringify(creatingParkingLot), 200);
+  } catch (err) {
+    console.error("Error fetching organization names and coordinates:", err);
+    error(req, res, "server-error", "Internal server error", 500);
+  }
+}
+
 export {
   createOrganization,
   getOrganization,
@@ -126,4 +144,5 @@ export {
   deleteOrganization,
   checkOrganizationExists,
   getNamesandCoordinates,
+  addParkingLot
 };

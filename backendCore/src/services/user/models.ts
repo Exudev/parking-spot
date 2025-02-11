@@ -5,6 +5,7 @@ import { VerificationCodeType } from "./types";
 export interface IUser extends Document {
   type: "user";
   email: string;
+  organizationId:string,
   username: string;
   name: string;
   lastname: string;
@@ -31,6 +32,7 @@ const UserSchema = new Schema<IUser>(
       enum: ["admin", "moderator","genin"],
       default: "moderator",
     },
+    organizationId:{ type: String, required: true },
     active: { type: Boolean, required: true, default: false },
     password: { type: String, required: true },
   },

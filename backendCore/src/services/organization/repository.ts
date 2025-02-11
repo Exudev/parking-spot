@@ -62,6 +62,7 @@ class OrganizationRepository {
       const user = await this.userCollection.insertOne({
         type: "user",
         email: req.user.email,
+        organizationId: req.organization.organizationId,
         username: req.user.username,
         name: req.user.name,
         lastName: req.user.lastname,
@@ -70,7 +71,7 @@ class OrganizationRepository {
       });
       if (!user.insertedId) {
         return {
-          type: "error",  
+          type: "error",
           errorCode: "server-error",
           errorMessage: "error-creating-user",
           statusCode: 500,
@@ -135,7 +136,7 @@ class OrganizationRepository {
           organization: {
             organizationId: organization.organizationId,
             name: organization.name,
-           settings: organization.settings,
+            settings: organization.settings,
             location: organization.location,
             locationDelta: organization.locationDelta,
           },
@@ -220,11 +221,41 @@ class OrganizationRepository {
       };
     }
   }
-//   public async addParkingLot(
-//     req: addParkingLotRequest
-//   ): Promise<addParkingLotResponse>{
-
-//   }
+  public async addParkingLot(
+    req: addParkingLotRequest
+  ): Promise<addParkingLotResponse> {
+    const exists = await this.organizationCollection.findOne({
+      type: "parking-lot",
+      organizationId: req.organizationId,
+      name: req.parkingLot.name,
+    });
+    if (exists?._id) {
+      return {
+        type: "error",
+        errorCode: "exists",
+        errorMessage: "already-exists",
+        statusCode: 409,
+      };
+    }
+    const createParkingLot = await this.organizationCollection.insertOne({
+      type: "organization",
+      organizationId: req.organizationId,
+      name: req.parkingLot.name,
+      location: req.parkingLot.location,
+    });
+    if (createParkingLot.insertedId) {
+      return {
+        type: "response",
+        success: true,
+      };
+    }
+    return {
+      type: "error",
+      errorCode: "server-error",
+      errorMessage: "error-creating-parking-lot",
+      statusCode: 500,
+    };
+  }
 }
 
 export default new OrganizationRepository();

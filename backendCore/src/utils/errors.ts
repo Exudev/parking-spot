@@ -44,7 +44,7 @@ class RepositoryError extends AppError {
     statusCode: number,
     details?: any
   ) {
-    super("error", statusCode, errorCode, errorMessage, details); // Asegúrate de pasar "error"
+    super("error", statusCode, errorCode, errorMessage, details);
   }
 }
 
