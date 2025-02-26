@@ -2,9 +2,8 @@ import express from "express";
 import { createUser, deleteUser, login } from "./controller";
 
 import passport = require("passport");
-import { signToken } from "@src/shared/utils";
 import jwt from "jsonwebtoken";
-import { SALT_ROUNDS, SECRET_KEY_JWT } from "../../constants/env";
+import { SECRET_KEY_JWT } from "../../constants/env";
 const userRouter = express.Router();
 
 userRouter.post(
@@ -19,7 +18,7 @@ userRouter.post(
       let payload = req.user;
       console.log(req.user);
       const token = jwt.sign(payload, SECRET_KEY_JWT, { expiresIn: "1h" });
-      return res.json({ token});
+      return res.json({ token });
     } catch (error) {
       next(error);
     }
