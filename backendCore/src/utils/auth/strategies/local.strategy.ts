@@ -1,5 +1,5 @@
 import { Strategy as LocalStrategy } from 'passport-local';
-import UserRepository from "../../../services/user/repository"
+import UserRepository from "../../../services/user/repository";
 import { compareValue } from "../../../shared/utils";
 
 export const localStrategy = new LocalStrategy(

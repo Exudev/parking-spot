@@ -1,7 +1,5 @@
 import { Strategy, ExtractJwt, StrategyOptions } from 'passport-jwt';
-import UserRepository from "../../../services/user/repository"
-import { compareValue } from "../../../shared/utils";
-import { SALT_ROUNDS, SECRET_KEY_JWT } from "../../../constants/env";
+import { SECRET_KEY_JWT } from "../../../constants/env";
 const options: StrategyOptions = {
   
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
