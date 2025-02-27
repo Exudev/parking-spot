@@ -226,7 +226,7 @@ class OrganizationRepository {
   ): Promise<addParkingLotResponse> {
     const exists = await this.organizationCollection.findOne({
       type: "parking-lot",
-      organizationId: req.organizationId,
+      organizationId: req.account.organizationId,
       name: req.parkingLot.name,
     });
     if (exists?._id) {
@@ -238,8 +238,8 @@ class OrganizationRepository {
       };
     }
     const createParkingLot = await this.organizationCollection.insertOne({
-      type: "organization",
-      organizationId: req.organizationId,
+      type: "parking-lot",
+      organizationId: req.account.organizationId,
       name: req.parkingLot.name,
       location: req.parkingLot.location,
     });

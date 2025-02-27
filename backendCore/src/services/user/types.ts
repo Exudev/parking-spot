@@ -1,4 +1,4 @@
-import { BaseRequest, BaseResponse, Organization, OrganizationLookup, User, UserSafe } from "../../types/types"
+import { BaseRequest ,BaseResponse, Organization, OrganizationLookup, User, UserSafe, WithoutAuthRequest } from "../../types/types"
 import { RepositoryError } from "../../utils/errors";
 
 export const enum VerificationCodeType {
@@ -6,7 +6,7 @@ export const enum VerificationCodeType {
   PasswordReset = 'password-reset'
 }
 
-export type createUserRequest = BaseRequest & {
+export type createUserRequest = WithoutAuthRequest & {
 user:User,
 };
 
@@ -14,7 +14,7 @@ export type createUserResponse = BaseResponse &{
   username: string;
 }  | RepositoryError;
 
-export type loginRequest = BaseRequest & {
+export type loginRequest = WithoutAuthRequest & {
 username: string;
 password: string;
 };

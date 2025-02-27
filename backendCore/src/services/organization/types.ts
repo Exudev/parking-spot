@@ -1,7 +1,7 @@
-import { BaseRequest, BaseResponse, Organization, OrganizationLookup, ParkingLot, User } from "../../types/types"
+import { BaseRequest, WithoutAuthRequest,BaseResponse, Organization, OrganizationLookup, ParkingLot, User } from "../../types/types"
 import { RepositoryError } from "../../utils/errors";
 
-export type createOrganizationRequest = BaseRequest & {
+export type createOrganizationRequest = WithoutAuthRequest & {
 organization : Organization,
 user:User,
 };
@@ -24,20 +24,20 @@ export type getOrganizationResponse =  BaseResponse &{
 organization: Organization;
 } | RepositoryError;
 
-export type checkOrganizationExistsRequest = BaseRequest & {
+export type checkOrganizationExistsRequest = WithoutAuthRequest & {
   organizationId: string;
 }
 export type checkOrganizationExistsResponse =  BaseResponse &{
 exists: boolean;
 } | RepositoryError;
 
-export type getNamesandCoordenatesRequest = BaseRequest & {
+export type getNamesandCoordenatesRequest = WithoutAuthRequest & {
 }
 export type getNamesandCoordenatesResponse =  BaseResponse &{
 organizations:OrganizationLookup[];
 } | RepositoryError;
 
-export type getAllOrganizationRequest = BaseRequest 
+export type getAllOrganizationRequest = WithoutAuthRequest 
 export type getAllOrganizationResponse =  BaseResponse &{
 organizations:Organization[];
 } | RepositoryError;

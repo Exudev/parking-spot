@@ -1,3 +1,5 @@
+import { AccountOrganizationToken } from "./express";
+
 export type errorCode =
   | "forbidden"
   | "exists"
@@ -41,12 +43,6 @@ export interface publicProfile {
   lastname: string;
 }
 
-export type AccountOrganizationToken ={
-    username: string,
-    permission: string,
-    organizationId:string, 
-}
-
 
 export type UserSafe = Omit<User, "password">
 
@@ -68,6 +64,6 @@ export type BaseResponse = {
 };
 export type BaseRequest = {
   type: "request";
- // account: ;
+  account: AccountOrganizationToken;
 };
 

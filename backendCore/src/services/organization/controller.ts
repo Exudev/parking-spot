@@ -38,9 +38,14 @@ async function createOrganization(req: Request, res: Response): Promise<void> {
 async function getOrganization(req: Request, res: Response): Promise<void> {
   try {
     const organizationId: string = req.params.id;
+    if(!req.account){
+      return error(req, res, "invalid-data", "Organization not found", 404);
+       
+    }
     const organization = await OrganizationRepository.getOrganization({
       type: "request",
       organizationId: organizationId,
+      account: req.account
     });
     if (organization) {
       success(req, res, "fetched", {organization}, 200);
@@ -68,9 +73,14 @@ async function getAllOrganizations(req: Request, res: Response): Promise<void> {
 async function deleteOrganization(req: Request, res: Response): Promise<void> {
   try {
     const organizationId: string = req.params.id;
+    if(!req.account)
+    {
+    return error(req, res, "server-error", "unauthorized", 500);
+    }
     const result = await OrganizationRepository.deleteOrganization({
       type: "request",
       organizationId: organizationId,
+      account:req.account,
     });
     if (result.type === "response") {
       success(req, res, "deleted", "Organization deleted successfully", 200);
@@ -124,11 +134,16 @@ async function addParkingLot(
   res: Response
 ): Promise<void> {
   try {
-    const { organizationId, parkingLot} = req.body;
+    console.log("controller")
+    const { organizationId,parkingLot} = req.body;
+    if(!req.account){
+    return error(req, res, "server-error", "Internal server error", 500);
+    }
     const creatingParkingLot = await OrganizationRepository.addParkingLot({
       type: "request",
       organizationId:organizationId,
       parkingLot: parkingLot,
+      account: req.account,
     });
     success(req, res, "created", JSON.stringify(creatingParkingLot), 200);
   } catch (err) {
