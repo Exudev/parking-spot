@@ -1,14 +1,11 @@
 import { ObjectId } from "mongodb";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { SALT_ROUNDS, SECRET_KEY_JWT } from "../../constants/env";
+import { SALT_ROUNDS } from "../../constants/env";
 import { UserModel, UserCollection } from "./models";
 import { RepositoryError } from "../../utils/errors";
-import { User,  } from "../../types/types";
 import { createUserRequest, findByEmailResponse, loginRequest, loginResponse } from "./types";
 
 import { compareValue, signToken,  } from "../../shared/utils";
-import { permission } from "process";
 class UserRepository {
   private userCollection = UserCollection;
 
@@ -69,7 +66,7 @@ class UserRepository {
         };
       }
 
-      const token = signToken(user.email,user.username, user.userType,user.organizationId)
+      const token = signToken(user.email,user.username, user.userType,user.organizationId);
 
       return { type: "response", token };
     } catch (error) {
@@ -112,7 +109,7 @@ class UserRepository {
           errorMessage:"user-not-found",
           statusCode:404,
 
-        }
+        };
       }
       return {
         type:"response",
@@ -126,7 +123,7 @@ class UserRepository {
           role:"admin",
           organizationId:user.organizationId
         }
-      }
+      };
     } catch (error) {
       throw new RepositoryError("server-error", "server-error", 500, error);
     }

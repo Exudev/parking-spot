@@ -1,4 +1,4 @@
-import { BaseRequest ,BaseResponse, Organization, OrganizationLookup, User, UserSafe, WithoutAuthRequest } from "../../types/types"
+import { BaseResponse,  User, WithoutAuthRequest } from "../../types/types"
 import { RepositoryError } from "../../utils/errors";
 
 export const enum VerificationCodeType {

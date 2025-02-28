@@ -1,8 +1,7 @@
 import express, {Application} from 'express';
 
-import bodyParser from 'body-parser';
 import "dotenv/config";
-import { APP_ORIGIN, MAXRETRYATTEMPTS, MONGO_URI, PORT } from './constants/env';
+import { APP_ORIGIN, MAXRETRYATTEMPTS, PORT } from './constants/env';
 import connectDB from './config/mongo';
 import cors from "cors";
 import routes from './network/routes';
@@ -16,8 +15,8 @@ connectDB();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({origin: APP_ORIGIN, credentials:true}))
-require("./utils/auth")
+app.use(cors({origin: APP_ORIGIN, credentials:true}));
+require("./utils/auth");
 app.use('/app', express.static('./public'));
 app.use(cookieParser());
 app.use(errorMiddleware);

@@ -2,12 +2,13 @@ import { ObjectId } from "mongodb";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { SALT_ROUNDS, SECRET_KEY_JWT } from "../constants/env";
-import { permissionType, User,  } from "@src/types/types";
+import { permissionType,  } from "@src/types/types";
 export function isValidObjectId(value: string): boolean {
   try {
     new ObjectId(value);
     return true;
   } catch (error) {
+    console.log(error);
     return false;
   }
 }

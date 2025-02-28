@@ -15,16 +15,14 @@ export const extractAccountFromToken = (
   }
 
   const token = authHeader.split(" ")[1];
-  console.log("hi ", token);
   try {
     const decoded = jwt.verify(
       token,
       SECRET_KEY_JWT
     ) as AccountOrganizationToken;
-    console.log(decoded);
     req.account = decoded;
     next();
   } catch (error) {
-    return res.status(401).json({ message: "Invalid token 1" });
+    return res.status(401).json({ message: error });
   }
 };

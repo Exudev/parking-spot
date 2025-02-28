@@ -1,5 +1,5 @@
 import express from "express";
-import { createUser, deleteUser, login } from "./controller";
+import { createUser } from "./controller";
 
 import passport = require("passport");
 import jwt from "jsonwebtoken";
@@ -25,5 +25,4 @@ userRouter.post(
   }
 );
 userRouter.post("/user", createUser);
-userRouter.delete("/user/:id", deleteUser);
 export default userRouter;

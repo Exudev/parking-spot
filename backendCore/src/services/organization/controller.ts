@@ -1,7 +1,6 @@
-import { Request, Response, NextFunction } from "express";
-import { Organization, User } from "../../types/types";
+import { Request, Response, } from "express";
+import { User } from "../../types/types";
 import { success, error } from "../../network/response";
-import { AppError, RepositoryError, ValidationError } from "../../utils/errors";
 import { createOrganizationRequest } from "./types";
 import OrganizationRepository from "./repository";
 
@@ -134,7 +133,6 @@ async function addParkingLot(
   res: Response
 ): Promise<void> {
   try {
-    console.log("controller")
     const { organizationId,parkingLot} = req.body;
     if(!req.account){
     return error(req, res, "server-error", "Internal server error", 500);

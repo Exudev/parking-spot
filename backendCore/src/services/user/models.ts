@@ -12,7 +12,7 @@ export interface IUser extends Document {
   permission: permissionType;
   active: boolean;
   password: string;
-  comparePassword(pass: string): Promise<boolean>;
+  comparePassword(_pass: string): Promise<boolean>;
 }
 const UserSchema = new Schema<IUser>(
   {
@@ -48,7 +48,7 @@ export interface IVerificationCode extends Document {
   expiresAt: Date;
   createdAt: Date;
 }
-const VerificationCodeSchema = new Schema<IVerificationCode>(
+const _VerificationCodeSchema = new Schema<IVerificationCode>(
   {
     userId: {
       type: Schema.ObjectId,

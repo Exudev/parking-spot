@@ -23,12 +23,6 @@ async function createUser(
   }
 }
 
-async function deleteUser(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {}
-
 async function login(
   req: Request,
   res: Response,
@@ -57,4 +51,4 @@ async function login(
     error(req, res, "server-error", "server-error", 500);
   }
 }
-export { createUser, deleteUser, login };
+export { createUser, login };

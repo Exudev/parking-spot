@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { AppError, RepositoryError, ValidationError } from '../utils/errors';
 
-const errorMiddleware = (err: any, req: Request, res: Response, next: NextFunction) => {
+const errorMiddleware = (err: any, _req: Request, res: Response, _next: NextFunction) => {
   console.error('Error: ', err);
 
   if (err instanceof AppError) {

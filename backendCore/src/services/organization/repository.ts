@@ -1,11 +1,10 @@
 import { ObjectId } from "mongodb";
-import { errorCode, Organization, User } from "../../types/types";
 import {
   OrganizationModel,
   OrganizationDBModel,
   OrganizationCollection,
 } from "./models";
-import { UserCollection, UserModel } from "../user/models";
+import { UserCollection } from "../user/models";
 import {
   addParkingLotRequest,
   addParkingLotResponse,
@@ -22,7 +21,6 @@ import {
   getOrganizationRequest,
   getOrganizationResponse,
 } from "./types";
-import { SALT_ROUNDS } from "./../../constants/env";
 import { hashValue } from "../../shared/utils";
 // For Organizations
 
@@ -181,7 +179,7 @@ class OrganizationRepository {
   }
 
   public async getNamesandCoordenates(
-    req: getNamesandCoordenatesRequest
+    _req: getNamesandCoordenatesRequest
   ): Promise<getNamesandCoordenatesResponse> {
     try {
       const organizations = await OrganizationModel.find(
@@ -203,7 +201,7 @@ class OrganizationRepository {
   }
 
   public async getAllOrganization(
-    req: getAllOrganizationRequest
+    _req: getAllOrganizationRequest
   ): Promise<getAllOrganizationResponse> {
     try {
       const organizations = await OrganizationModel.find();
