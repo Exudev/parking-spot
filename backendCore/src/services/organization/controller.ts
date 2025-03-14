@@ -118,7 +118,7 @@ async function getNamesandCoordinates(
   res: Response
 ): Promise<void> {
   try {
-    const organizations = await OrganizationRepository.getNamesandCoordenates({
+    const organizations = await OrganizationRepository.getOrganizationNamesandCoordenates({
       type: "request",
     });
     success(req, res, "fetched", JSON.stringify(organizations), 200);

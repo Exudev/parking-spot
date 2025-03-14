@@ -52,6 +52,12 @@ export interface ParkingLot {
   description: string;
   location: GeoJSONPoint;
 }
+
+export interface Parking {
+  parkingLotId: string;
+  name: string;
+  basePrice: number;
+}
 export type OrganizationLookup = Pick<Organization, "name" | "location"| "locationDelta">;
 export type ParkingLookup = Pick<ParkingLot, "name" | "location">;
 export type ResponseType = "response"  | "info"  | "error";

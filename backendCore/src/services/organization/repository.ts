@@ -20,6 +20,8 @@ import {
   getNamesandCoordenatesResponse,
   getOrganizationRequest,
   getOrganizationResponse,
+  removeParkingLotRequest,
+
 } from "./types";
 import { hashValue } from "../../shared/utils";
 // For Organizations
@@ -28,6 +30,7 @@ class OrganizationRepository {
   private organizationCollection = OrganizationCollection;
   private userCollection = UserCollection;
 
+  // Organization related
   public async createOrganization(
     req: createOrganizationRequest
   ): Promise<createOrganizationResponse> {
@@ -39,7 +42,7 @@ class OrganizationRepository {
       return {
         type: "error",
         errorCode: "exists",
-        errorMessage: "already-exists",
+        errorMessage: "orgzanizationId-already-exists",
         statusCode: 409,
       };
     }
@@ -79,7 +82,7 @@ class OrganizationRepository {
     if (createOrg.insertedId) {
       return {
         type: "response",
-        organizationId: String(createOrg.insertedId),
+        organizationId: createOrg.insertedId.toString(),
       };
     }
     return {
@@ -123,10 +126,9 @@ class OrganizationRepository {
     req: getOrganizationRequest
   ): Promise<getOrganizationResponse> {
     try {
-      const objectId = new ObjectId(req.organizationId);
       const organization =
         await OrganizationCollection.findOne<OrganizationDBModel>({
-          _id: objectId,
+          organizationId: req.account,
         });
       if (organization) {
         return {
@@ -178,7 +180,7 @@ class OrganizationRepository {
     }
   }
 
-  public async getNamesandCoordenates(
+  public async getOrganizationNamesandCoordenates(
     _req: getNamesandCoordenatesRequest
   ): Promise<getNamesandCoordenatesResponse> {
     try {
@@ -191,6 +193,7 @@ class OrganizationRepository {
         organizations: organizations,
       };
     } catch (error) {
+      console.error(error);
       return {
         type: "error",
         errorCode: "server-error",
@@ -254,6 +257,120 @@ class OrganizationRepository {
       statusCode: 500,
     };
   }
+  public async removeParkingLot(
+    req: removeParkingLotRequest
+  ): Promise<addParkingLotResponse> {
+    const exists = await this.organizationCollection.findOne({
+      type: "parking-lot",
+      organizationId: req.account.organizationId,
+      _id: new ObjectId(req.parkingLotId),
+    });
+    if (!exists) {
+      return {
+        type: "error",
+        errorCode: "not-found",
+        errorMessage: "Couldnt found organization",
+        statusCode: 409,
+      };
+    }
+    const deletingParkingLot = await this.organizationCollection.deleteOne({
+      type: "parking-lot",
+      organizationId: req.account.organizationId,
+      _id: new ObjectId(req.parkingLotId),
+    });
+    if (deletingParkingLot.acknowledged) {
+      return {
+        type: "response",
+        success: true,
+      };
+    }
+    return {
+      type: "error",
+      errorCode: "server-error",
+      errorMessage: "Couldnt delete parking lot",
+      statusCode: 500,
+    };
+  }
+  // public async addParking(req: addParkingRequest): Promise<addParkingResponse> {
+  //   const existsParkingLot = await this.organizationCollection.findOne({
+  //     type: "parking-lot",
+  //     organizationId: req.account.organizationId,
+  //     parkingLotId: req.parking.parkingLotId,
+  //   });
+  //   if (!existsParkingLot) {
+  //     return {
+  //       type: "error",
+  //       errorCode: "not-found",
+  //       errorMessage: "parking lot not found",
+  //       statusCode: 409,
+  //     };
+  //   }
+  //   const exists = await this.organizationCollection.findOne({
+  //     type: "parking",
+  //     parkingLotId: req.parking.parkingLotId,
+  //     name: req.parking.name,
+  //   });
+  //   if(exists?._id){
+  //     return {
+  //       type :"error" ,
+  //       errorCode:"exists",
+  //       errorMessage:"already exists",
+  //       statusCode:400,
+  //     }
+  //   }
+  //   const createParking = await this.organizationCollection.insertOne({
+  //     type: "parking",
+  //     organizationId: req.account.organizationId,
+  //     name: req.parking.name,
+  //     av
+  //   });
+  //   if (createParkingLot.insertedId) {
+  //     return {
+  //       type: "response",
+  //       success: true,
+  //     };
+  //   }
+  //   return {
+  //     type: "error",
+  //     errorCode: "server-error",
+  //     errorMessage: "error-creating-parking-lot",
+  //     statusCode: 500,
+  //   };
+  // }
+  // public async removeParking(
+  //   req: removeParkingRequest
+  // ): Promise<removeParkingResponse> {
+  //   const exists = await this.organizationCollection.findOne({
+  //     type: "parking",
+  //     organizationId: req.account.organizationId,
+  //     _id: new ObjectId(req.parkingId),
+  //   });
+  //   if (!exists) {
+  //     return {
+  //       type: "error",
+  //       errorCode: "not-found",
+  //       errorMessage: "Couldnt found parking",
+  //       statusCode: 409,
+  //     };
+  //   }
+  //   const deletingParkingLot = await this.organizationCollection.deleteOne({
+  //     type: "parking-lot",
+  //     organizationId: req.account.organizationId,
+  //     _id: new ObjectId(req.parkingId),
+  //   });
+  //   if (deletingParkingLot.acknowledged) {
+  //     return {
+  //       type: "response",
+  //       success: true,
+  //     };
+  //   }
+  //   return {
+  //     type: "error",
+  //     errorCode: "server-error",
+  //     errorMessage: "Couldnt delete parking lot",
+  //     statusCode: 500,
+  //   };
+  // }
 }
 
 export default new OrganizationRepository();
