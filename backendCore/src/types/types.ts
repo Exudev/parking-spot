@@ -31,7 +31,7 @@ export interface User {
   email: string;
   name: string;
   lastname: string;
-  permissions: permissionType; //change
+  permissions: permissionType;
   password: string;
   role:string,
 }

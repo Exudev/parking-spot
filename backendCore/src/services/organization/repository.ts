@@ -21,7 +21,6 @@ import {
   getOrganizationRequest,
   getOrganizationResponse,
   removeParkingLotRequest,
-
 } from "./types";
 import { hashValue } from "../../shared/utils";
 // For Organizations
