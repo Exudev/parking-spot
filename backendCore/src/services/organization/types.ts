@@ -63,7 +63,6 @@ export type getAllOrganizationResponse =
   | RepositoryError;
 
 export type addParkingLotRequest = BaseRequest & {
-  organizationId: string;
   parkingLot: ParkingLot;
 };
 export type addParkingLotResponse =

@@ -29,7 +29,7 @@ class OrganizationRepository {
   private organizationCollection = OrganizationCollection;
   private userCollection = UserCollection;
 
-  // Organization related
+  // Organization users to use 
   public async createOrganization(
     req: createOrganizationRequest
   ): Promise<createOrganizationResponse> {
@@ -216,7 +216,7 @@ class OrganizationRepository {
       return {
         type: "error",
         errorCode: "server-error",
-        errorMessage: "server-error",
+        errorMessage: "Error occurred during fetching all organizations",
         statusCode: 500,
       };
     }
@@ -370,6 +370,10 @@ class OrganizationRepository {
   //     statusCode: 500,
   //   };
   // }
+
+
+
+  // For driuver users to use 
 }
 
 export default new OrganizationRepository();

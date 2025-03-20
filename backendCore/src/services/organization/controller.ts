@@ -133,19 +133,39 @@ async function addParkingLot(
   res: Response
 ): Promise<void> {
   try {
-    const { organizationId,parkingLot} = req.body;
+    const { parkingLot} = req.body;
     if(!req.account){
     return error(req, res, "server-error", "Internal server error", 500);
     }
     const creatingParkingLot = await OrganizationRepository.addParkingLot({
       type: "request",
-      organizationId:organizationId,
       parkingLot: parkingLot,
       account: req.account,
     });
     success(req, res, "created", JSON.stringify(creatingParkingLot), 200);
   } catch (err) {
-    console.error("Error fetching organization names and coordinates:", err);
+    console.error("Error creating parking lot:", err);
+    error(req, res, "server-error", "Internal server error", 500);
+  }
+}
+
+async function removeParkingLot(
+  req: Request,
+  res: Response
+): Promise<void> {
+  try {
+    const { parkingLotId} = req.body;
+    if(!req.account){
+    return error(req, res, "server-error", "Internal server error", 500);
+    }
+    const removingParkingLot = await OrganizationRepository.removeParkingLot({
+      type: "request",
+      parkingLotId:parkingLotId, 
+      account: req.account,
+    });
+    success(req, res, "deleted", JSON.stringify(removingParkingLot), 200);
+  } catch (err) {
+    console.error("Error removing parking lot ", err);
     error(req, res, "server-error", "Internal server error", 500);
   }
 }
@@ -157,5 +177,6 @@ export {
   deleteOrganization,
   checkOrganizationExists,
   getNamesandCoordinates,
-  addParkingLot
+  addParkingLot,
+  removeParkingLot
 };
