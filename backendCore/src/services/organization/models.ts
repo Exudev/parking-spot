@@ -1,3 +1,4 @@
+import { organizationPlan } from '@src/types/types';
 import { Schema, model } from 'mongoose';
 
 export type OrganizationDBModel = {
@@ -14,6 +15,8 @@ export type OrganizationDBModel = {
   };
   settings : {
     owner : string,
+    active:boolean,
+    plan:organizationPlan,
   }
   owner: string;
   createdAt: Date;
@@ -37,7 +40,7 @@ export type ParkingLotDBModel = {
 
 export type ParkingDBModel = {
   type: "parking";
-  parkingLot: Schema.Types.ObjectId;
+  parkingLotId: Schema.Types.ObjectId;
   availability: boolean;
 }
  
@@ -128,9 +131,9 @@ const ParkingSchema = new Schema<ParkingDBModel>(
       required: true,
       enum: ["parking"],
     },
-    parkingLot:{
+    parkingLotId:{
       type: Schema.ObjectId,
-      ref: 'ParkingLot', 
+      ref: 'ParkingLotId', 
       required: true
   }, 
     availability: { type: Boolean, required: true, trim: true }

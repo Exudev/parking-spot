@@ -1,4 +1,4 @@
-import { Request, Response, } from "express";
+import { Request, Response } from "express";
 import { User } from "../../types/types";
 import { success, error } from "../../network/response";
 import { createOrganizationRequest } from "./types";
@@ -6,7 +6,7 @@ import OrganizationRepository from "./repository";
 
 async function createOrganization(req: Request, res: Response): Promise<void> {
   try {
-    const { organizationId, name, location, locationDelta } = req.body;
+    const { organizationId, name, location, plan, locationDelta } = req.body;
     const user: User = req.body.user;
     const request: createOrganizationRequest = {
       type: "request",
@@ -15,6 +15,8 @@ async function createOrganization(req: Request, res: Response): Promise<void> {
         name: name,
         settings: {
           owner: user.email,
+          active: false,
+          plan:plan,
         },
         location: location,
         locationDelta: locationDelta,
@@ -37,17 +39,16 @@ async function createOrganization(req: Request, res: Response): Promise<void> {
 async function getOrganization(req: Request, res: Response): Promise<void> {
   try {
     const organizationId: string = req.params.id;
-    if(!req.account){
+    if (!req.account) {
       return error(req, res, "invalid-data", "Organization not found", 404);
-       
     }
     const organization = await OrganizationRepository.getOrganization({
       type: "request",
       organizationId: organizationId,
-      account: req.account
+      account: req.account,
     });
     if (organization) {
-      success(req, res, "fetched", {organization}, 200);
+      success(req, res, "fetched", { organization }, 200);
     } else {
       error(req, res, "invalid-data", "Organization not found", 404);
     }
@@ -62,24 +63,23 @@ async function getAllOrganizations(req: Request, res: Response): Promise<void> {
     const organizations = await OrganizationRepository.getAllOrganization({
       type: "request",
     });
-    success(req, res, "fetched", {organizations}, 200);
+    success(req, res, "fetched", { organizations }, 200);
   } catch (err) {
     console.error("Error fetching organizations:", err);
     error(req, res, "server-error", "Internal server error", 500);
   }
 }
-
+// TODO: check vulnerabiilities
 async function deleteOrganization(req: Request, res: Response): Promise<void> {
   try {
     const organizationId: string = req.params.id;
-    if(!req.account)
-    {
-    return error(req, res, "server-error", "unauthorized", 500);
+    if (!req.account) {
+      return error(req, res, "server-error", "unauthorized", 500);
     }
     const result = await OrganizationRepository.deleteOrganization({
       type: "request",
       organizationId: organizationId,
-      account:req.account,
+      account: req.account,
     });
     if (result.type === "response") {
       success(req, res, "deleted", "Organization deleted successfully", 200);
@@ -118,9 +118,10 @@ async function getNamesandCoordinates(
   res: Response
 ): Promise<void> {
   try {
-    const organizations = await OrganizationRepository.getOrganizationNamesandCoordenates({
-      type: "request",
-    });
+    const organizations =
+      await OrganizationRepository.getOrganizationNamesandCoordenates({
+        type: "request",
+      });
     success(req, res, "fetched", JSON.stringify(organizations), 200);
   } catch (err) {
     console.error("Error fetching organization names and coordinates:", err);
@@ -128,14 +129,11 @@ async function getNamesandCoordinates(
   }
 }
 
-async function addParkingLot(
-  req: Request,
-  res: Response
-): Promise<void> {
+async function addParkingLot(req: Request, res: Response): Promise<void> {
   try {
-    const { parkingLot} = req.body;
-    if(!req.account){
-    return error(req, res, "server-error", "Internal server error", 500);
+    const { parkingLot } = req.body;
+    if (!req.account) {
+      return error(req, res, "server-error", "Internal server error", 500);
     }
     const creatingParkingLot = await OrganizationRepository.addParkingLot({
       type: "request",
@@ -149,18 +147,53 @@ async function addParkingLot(
   }
 }
 
-async function removeParkingLot(
-  req: Request,
-  res: Response
-): Promise<void> {
+async function removeParkingLot(req: Request, res: Response): Promise<void> {
   try {
-    const { parkingLotId} = req.body;
-    if(!req.account){
-    return error(req, res, "server-error", "Internal server error", 500);
+    const { parkingLotId } = req.body;
+    if (!req.account) {
+      return error(req, res, "server-error", "Internal server error", 500);
     }
     const removingParkingLot = await OrganizationRepository.removeParkingLot({
       type: "request",
-      parkingLotId:parkingLotId, 
+      parkingLotId: parkingLotId,
+      account: req.account,
+    });
+    success(req, res, "deleted", JSON.stringify(removingParkingLot), 200);
+  } catch (err) {
+    console.error("Error removing parking lot ", err);
+    error(req, res, "server-error", "Internal server error", 500);
+  }
+}
+
+async function getParkingLot(req: Request, res: Response): Promise<void> {
+  try {
+    const parkingLotId = req.params.id;
+    if (!req.account) {
+      return error(req, res, "server-error", "unauthorized", 401);
+    }
+    const result = await OrganizationRepository.getParkingLot({
+      type: "request",
+      account: req.account,
+      parkingLotId: parkingLotId, 
+    });
+    if (result.type === "response") {
+      success(req, res, "fetched", "parking-lot fetched successfully", 200);
+    } else {
+      error(req, res, "invalid-data", "parking lot not found", 404);
+    }
+  } catch (err) {
+    console.error("Error fetching parking-lot:", err);
+    error(req, res, "server-error", "Internal server error", 500);
+  }
+}
+
+async function getAllParkingLot(req: Request, res: Response): Promise<void> {
+  try {
+    if (!req.account) {
+      return error(req, res, "unauthorized", "unauthorized", 500);
+    }
+    const removingParkingLot = await OrganizationRepository.getAllParkingLot({
+      type: "request",
       account: req.account,
     });
     success(req, res, "deleted", JSON.stringify(removingParkingLot), 200);
@@ -178,5 +211,7 @@ export {
   checkOrganizationExists,
   getNamesandCoordinates,
   addParkingLot,
-  removeParkingLot
+  removeParkingLot,
+  getAllParkingLot,
+  getParkingLot
 };

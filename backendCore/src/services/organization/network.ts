@@ -8,6 +8,8 @@ import {
   getNamesandCoordinates,
   addParkingLot,
   removeParkingLot,
+  getAllParkingLot,
+  getParkingLot,
 } from "./controller";
 import {
   createOrganizationRequestSchema,
@@ -25,9 +27,13 @@ organizationRouter.post(
   validateBodyRequest(createOrganizationRequestSchema),
   createOrganization
 ); //checked
-organizationRouter.get("/organization-all", getAllOrganizations); //checked
-organizationRouter.get("/organization-info/", getNamesandCoordinates);
-organizationRouter.delete("/organization/:id", deleteOrganization);
+
+organizationRouter.delete(
+  "/organization/:id",
+  passport.authenticate("jwt", { session: false }),
+  extractAccountFromToken,
+  deleteOrganization
+);
 organizationRouter.get("/organization/exists/:name", checkOrganizationExists); //checked
 organizationRouter.get("/organization/:id", getOrganization); //checked
 
@@ -44,12 +50,25 @@ organizationRouter.delete(
   extractAccountFromToken,
   removeParkingLot
 );
+organizationRouter.get(
+  "parking-lot/",
+  passport.authenticate("jwt", { session: false }),
+  extractAccountFromToken,
+  getAllParkingLot
+);
+
+organizationRouter.get(
+  "parking-lot/:id",
+  passport.authenticate("jwt", { session: false }),
+  extractAccountFromToken,
+  getParkingLot
+);
 
 // #endregion
 
-
-
-// Crear un middleware que tome el token auth y me lo pase al request como account.
+// TODO: Crear un middleware que tome el token auth y me lo pase al request como account.
 
 //For users to use
+organizationRouter.get("/organization-all", getAllOrganizations); //checked
+organizationRouter.get("/organization-info/", getNamesandCoordinates);
 export default organizationRouter;

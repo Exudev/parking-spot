@@ -81,6 +81,24 @@ export type removeParkingLotResponse =
     })
   | RepositoryError;
 
+export type getParkingLotRequest = BaseRequest & {
+  parkingLotId: string;
+};
+
+export type getParkingLotResponse =
+  | (BaseResponse & {
+      parkingLot: ParkingLot;
+    })
+  | RepositoryError;
+
+export type getAllParkingLotRequest = BaseRequest;
+
+export type getAllParkingLotResponse =
+  | (BaseResponse & {
+      parkingLots: ParkingLot[];
+    })
+  | RepositoryError;
+
 export type addParkingRequest = BaseRequest & {
   parking: Parking;
 };
@@ -90,12 +108,12 @@ export type addParkingResponse =
     })
   | RepositoryError;
 
-  export type removeParkingRequest = BaseRequest & {
-    organizationId: string;
-    parkingId: string;
-  };
-  export type removeParkingResponse =
-    | (BaseResponse & {
-        success: boolean;
-      })
-    | RepositoryError;
+export type removeParkingRequest = BaseRequest & {
+  organizationId: string;
+  parkingId: string;
+};
+export type removeParkingResponse =
+  | (BaseResponse & {
+      success: boolean;
+    })
+  | RepositoryError;

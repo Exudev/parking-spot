@@ -2,12 +2,14 @@ import { AccountOrganizationToken } from "./express";
 
 export type errorCode =
   | "forbidden"
+  | "unauthorized"
   | "exists"
   | "server-error"
   | "invalid-data"
   | "not-found";
 export type responseCode = "created" | "updated" | "fetched" | "deleted";
 export type permissionType = "admin"|"moderator"|"genin";
+export type organizationPlan= "basic"|"normal"|"premium";
 interface GeoJSONPoint {
   type: "Point";
   coordinates: [number, number];
@@ -15,6 +17,8 @@ interface GeoJSONPoint {
 
 interface OrganizationSettings {
   owner : string;
+  plan:organizationPlan ;
+  active: boolean;
 }
 
 export interface Organization {

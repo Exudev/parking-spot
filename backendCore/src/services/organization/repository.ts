@@ -3,11 +3,14 @@ import {
   OrganizationModel,
   OrganizationDBModel,
   OrganizationCollection,
+  ParkingLotModel,
 } from "./models";
 import { UserCollection } from "../user/models";
 import {
   addParkingLotRequest,
   addParkingLotResponse,
+  addParkingRequest,
+  addParkingResponse,
   checkOrganizationExistsRequest,
   checkOrganizationExistsResponse,
   createOrganizationRequest,
@@ -16,20 +19,27 @@ import {
   deleteOrganizationResponse,
   getAllOrganizationRequest,
   getAllOrganizationResponse,
+  getAllParkingLotRequest,
+  getAllParkingLotResponse,
   getNamesandCoordenatesRequest,
   getNamesandCoordenatesResponse,
   getOrganizationRequest,
   getOrganizationResponse,
+  getParkingLotRequest,
+  getParkingLotResponse,
   removeParkingLotRequest,
+  removeParkingRequest,
+  removeParkingResponse,
 } from "./types";
 import { hashValue } from "../../shared/utils";
+import { ParkingLot } from "@src/types/types";
 // For Organizations
 
 class OrganizationRepository {
   private organizationCollection = OrganizationCollection;
   private userCollection = UserCollection;
 
-  // Organization users to use 
+  // Organization users to use
   public async createOrganization(
     req: createOrganizationRequest
   ): Promise<createOrganizationResponse> {
@@ -95,9 +105,64 @@ class OrganizationRepository {
     req: deleteOrganizationRequest
   ): Promise<deleteOrganizationResponse> {
     try {
+      // ask for a prompt org id to user and check it
+      if (req.organizationId !== req.account.organizationId) {
+        return {
+          type: "error",
+          errorCode: "invalid-data",
+          errorMessage: "provided organization Id does not match",
+          statusCode: 500,
+        };
+      }
+
+      //TODO: This iis not deleting everything of the organization : parking-spots
       const result = await this.organizationCollection.deleteOne({
-        organizationId: { $eq: req.organizationId },
+        type: "organzation",
+        organizationId: { $eq: req.account.organizationId },
       });
+
+      const deletedParkingLots = await this.organizationCollection
+        .find(
+          {
+            type: "parking-lot",
+            organizationId: { $eq: req.account.organizationId },
+          },
+          { projection: { _id: 1 } }
+        )
+        .toArray();
+
+      const parkingLotIds = deletedParkingLots.map((doc) => doc._id);
+
+      const deletingParkingLots = await this.organizationCollection.deleteMany({
+        type: "parking-lot",
+        organizationId: { $eq: req.account.organizationId },
+      });
+
+      if (!deletingParkingLots.acknowledged) {
+        return {
+          type: "error",
+          errorCode: "server-error",
+          errorMessage: "error deleting parking lots",
+          statusCode: 500,
+        };
+      }
+
+      if (parkingLotIds.length > 0) {
+        const deletingParking = await this.organizationCollection.deleteMany({
+          type: "parking",
+          parkingLotId: { $in: parkingLotIds },
+        });
+
+        if (!deletingParking.acknowledged) {
+          return {
+            type: "error",
+            errorCode: "server-error",
+            errorMessage: "error deleting parking",
+            statusCode: 500,
+          };
+        }
+      }
+
       if (result.acknowledged) {
         return {
           type: "response",
@@ -202,25 +267,6 @@ class OrganizationRepository {
     }
   }
 
-  public async getAllOrganization(
-    _req: getAllOrganizationRequest
-  ): Promise<getAllOrganizationResponse> {
-    try {
-      const organizations = await OrganizationModel.find();
-      return {
-        type: "response",
-        organizations: organizations,
-      };
-    } catch (error) {
-      console.error("Error occurred during fetching all organizations:", error);
-      return {
-        type: "error",
-        errorCode: "server-error",
-        errorMessage: "Error occurred during fetching all organizations",
-        statusCode: 500,
-      };
-    }
-  }
   public async addParkingLot(
     req: addParkingLotRequest
   ): Promise<addParkingLotResponse> {
@@ -290,90 +336,149 @@ class OrganizationRepository {
       statusCode: 500,
     };
   }
-  // public async addParking(req: addParkingRequest): Promise<addParkingResponse> {
-  //   const existsParkingLot = await this.organizationCollection.findOne({
-  //     type: "parking-lot",
-  //     organizationId: req.account.organizationId,
-  //     parkingLotId: req.parking.parkingLotId,
-  //   });
-  //   if (!existsParkingLot) {
-  //     return {
-  //       type: "error",
-  //       errorCode: "not-found",
-  //       errorMessage: "parking lot not found",
-  //       statusCode: 409,
-  //     };
-  //   }
-  //   const exists = await this.organizationCollection.findOne({
-  //     type: "parking",
-  //     parkingLotId: req.parking.parkingLotId,
-  //     name: req.parking.name,
-  //   });
-  //   if(exists?._id){
-  //     return {
-  //       type :"error" ,
-  //       errorCode:"exists",
-  //       errorMessage:"already exists",
-  //       statusCode:400,
-  //     }
-  //   }
-  //   const createParking = await this.organizationCollection.insertOne({
-  //     type: "parking",
-  //     organizationId: req.account.organizationId,
-  //     name: req.parking.name,
-  //     av
-  //   });
-  //   if (createParkingLot.insertedId) {
-  //     return {
-  //       type: "response",
-  //       success: true,
-  //     };
-  //   }
-  //   return {
-  //     type: "error",
-  //     errorCode: "server-error",
-  //     errorMessage: "error-creating-parking-lot",
-  //     statusCode: 500,
-  //   };
-  // }
-  // public async removeParking(
-  //   req: removeParkingRequest
-  // ): Promise<removeParkingResponse> {
-  //   const exists = await this.organizationCollection.findOne({
-  //     type: "parking",
-  //     organizationId: req.account.organizationId,
-  //     _id: new ObjectId(req.parkingId),
-  //   });
-  //   if (!exists) {
-  //     return {
-  //       type: "error",
-  //       errorCode: "not-found",
-  //       errorMessage: "Couldnt found parking",
-  //       statusCode: 409,
-  //     };
-  //   }
-  //   const deletingParkingLot = await this.organizationCollection.deleteOne({
-  //     type: "parking-lot",
-  //     organizationId: req.account.organizationId,
-  //     _id: new ObjectId(req.parkingId),
-  //   });
-  //   if (deletingParkingLot.acknowledged) {
-  //     return {
-  //       type: "response",
-  //       success: true,
-  //     };
-  //   }
-  //   return {
-  //     type: "error",
-  //     errorCode: "server-error",
-  //     errorMessage: "Couldnt delete parking lot",
-  //     statusCode: 500,
-  //   };
-  // }
+  public async getParkingLot(
+    req: getParkingLotRequest
+  ): Promise<getParkingLotResponse> {
+    const organization = await this.organizationCollection.findOne({
+      type: "parking-lot",
+      organizationId: req.account.organizationId,
+      _id: new ObjectId(req.parkingLotId),
+    });
+    if (!organization) {
+      return {
+        type: "error",
+        errorCode: "not-found",
+        errorMessage: "Couldnt found organization",
+        statusCode: 409,
+      };
+    }
+    const parkingLot: ParkingLot = {
+      name: organization.name,
+      organizationId: organization.organizationId,
+      description: organization.description,
+      location: organization.location,
+    };
 
+    return {
+      type: "response",
+      parkingLot: parkingLot,
+    };
+  }
 
+  public async getAllParkingLot(
+    req: getAllParkingLotRequest
+  ): Promise<getAllParkingLotResponse> {
+    const parkingLots = await ParkingLotModel.find({
+      type: "parking-lot",
+      organizationId: req.account.organizationId,
+    });
 
-  // For driuver users to use 
+    return {
+      type: "response",
+      parkingLots: parkingLots,
+    };
+  }
+  public async addParking(req: addParkingRequest): Promise<addParkingResponse> {
+    const existsParkingLot = await this.organizationCollection.findOne({
+      type: "parking-lot",
+      organizationId: req.account.organizationId,
+      parkingLotId: req.parking.parkingLotId,
+    });
+    if (!existsParkingLot) {
+      return {
+        type: "error",
+        errorCode: "not-found",
+        errorMessage: "parking lot not found",
+        statusCode: 409,
+      };
+    }
+    const exists = await this.organizationCollection.findOne({
+      type: "parking",
+      parkingLotId: req.parking.parkingLotId,
+      name: req.parking.name,
+    });
+    if (exists?._id) {
+      return {
+        type: "error",
+        errorCode: "exists",
+        errorMessage: "already exists",
+        statusCode: 400,
+      };
+    }
+    const createParking = await this.organizationCollection.insertOne({
+      type: "parking",
+      organizationId: req.account.organizationId,
+      name: req.parking.name,
+    });
+    if (createParking.insertedId) {
+      return {
+        type: "response",
+        success: true,
+      };
+    }
+    return {
+      type: "error",
+      errorCode: "server-error",
+      errorMessage: "error-creating-parking-lot",
+      statusCode: 500,
+    };
+  }
+  public async removeParking(
+    req: removeParkingRequest
+  ): Promise<removeParkingResponse> {
+    const exists = await this.organizationCollection.findOne({
+      type: "parking",
+      organizationId: req.account.organizationId,
+      _id: new ObjectId(req.parkingId),
+    });
+    if (!exists) {
+      return {
+        type: "error",
+        errorCode: "not-found",
+        errorMessage: "Couldnt found parking",
+        statusCode: 409,
+      };
+    }
+    const deletingParkingLot = await this.organizationCollection.deleteOne({
+      type: "parking-lot",
+      organizationId: req.account.organizationId,
+      _id: new ObjectId(req.parkingId),
+    });
+    if (deletingParkingLot.acknowledged) {
+      return {
+        type: "response",
+        success: true,
+      };
+    }
+    return {
+      type: "error",
+      errorCode: "server-error",
+      errorMessage: "Couldnt delete parking lot",
+      statusCode: 500,
+    };
+  }
+
+  // For driuver users to use
+
+  public async getAllOrganization(
+    _req: getAllOrganizationRequest
+  ): Promise<getAllOrganizationResponse> {
+    try {
+      const organizations = await OrganizationModel.find();
+      return {
+        type: "response",
+        organizations: organizations,
+      };
+    } catch (error) {
+      console.error("Error occurred during fetching all organizations:", error);
+      return {
+        type: "error",
+        errorCode: "server-error",
+        errorMessage: "Error occurred during fetching all organizations",
+        statusCode: 500,
+      };
+    }
+  }
 }
 
 export default new OrganizationRepository();
