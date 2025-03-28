@@ -27,6 +27,7 @@ import {
   getOrganizationResponse,
   getParkingLotRequest,
   getParkingLotResponse,
+  getParkingsByParkingLotRequest,
   removeParkingLotRequest,
   removeParkingRequest,
   removeParkingResponse,
@@ -338,6 +339,34 @@ class OrganizationRepository {
   }
   public async getParkingLot(
     req: getParkingLotRequest
+  ): Promise<getParkingLotResponse> {
+    const organization = await this.organizationCollection.findOne({
+      type: "parking-lot",
+      organizationId: req.account.organizationId,
+      _id: new ObjectId(req.parkingLotId),
+    });
+    if (!organization) {
+      return {
+        type: "error",
+        errorCode: "not-found",
+        errorMessage: "couldn't found organization",
+        statusCode: 409,
+      };
+    }
+    const parkingLot: ParkingLot = {
+      name: organization.name,
+      organizationId: organization.organizationId,
+      description: organization.description,
+      location: organization.location,
+    };
+
+    return {
+      type: "response",
+      parkingLot: parkingLot,
+    };
+  }
+  public async getParkingsByParkingLot(
+    req: getParkingsByParkingLotRequest
   ): Promise<getParkingLotResponse> {
     const organization = await this.organizationCollection.findOne({
       type: "parking-lot",

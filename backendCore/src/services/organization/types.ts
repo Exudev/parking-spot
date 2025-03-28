@@ -91,6 +91,17 @@ export type getParkingLotResponse =
     })
   | RepositoryError;
 
+  export type getParkingsByParkingLotRequest = BaseRequest & {
+    parkingLotId: string;
+  };
+  
+  export type getParkingsByParkingLotResponse =
+    | (BaseResponse & {
+        parkings: Parking[];
+      })
+    | RepositoryError;
+
+    
 export type getAllParkingLotRequest = BaseRequest;
 
 export type getAllParkingLotResponse =
