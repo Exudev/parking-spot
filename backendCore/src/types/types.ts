@@ -8,7 +8,7 @@ export type errorCode =
   | "invalid-data"
   | "not-found";
 export type responseCode = "created" | "updated" | "fetched" | "deleted";
-export type permissionType = "admin"|"moderator"|"genin";
+export type permissionType = "admin"|"moderator";
 export type organizationPlan= "basic"|"normal"|"premium";
 interface GeoJSONPoint {
   type: "Point";

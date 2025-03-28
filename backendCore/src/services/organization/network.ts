@@ -5,11 +5,13 @@ import {
   getAllOrganizations,
   deleteOrganization,
   checkOrganizationExists,
-  getNamesandCoordinates,
+  getNamesAndCoordinates,
   addParkingLot,
   removeParkingLot,
   getAllParkingLot,
   getParkingLot,
+  removeParking,
+  addParking,
 } from "./controller";
 import {
   createOrganizationRequestSchema,
@@ -20,7 +22,7 @@ import { extractAccountFromToken } from "../../middlewares/AuthMiddleware";
 
 const organizationRouter = express.Router();
 
-//For organizations-users to use
+// #region For organizations-users to use
 
 organizationRouter.post(
   "/organization",
@@ -64,11 +66,33 @@ organizationRouter.get(
   getParkingLot
 );
 
+// TODO: Parking-lot method to bring all parkings of a parking-lot
+
 // #endregion
 
-// TODO: Crear un middleware que tome el token auth y me lo pase al request como account.
 
-//For users to use
+//#region parking 
+organizationRouter.post(
+  "/parking",
+  passport.authenticate("jwt", { session: false }),
+  extractAccountFromToken,
+  addParking
+);
+organizationRouter.delete(
+  "/parking",
+  passport.authenticate("jwt", { session: false }),
+  extractAccountFromToken,
+  removeParking
+);
+//#endregion 
+
+//#endregion
+
+// TODO: Create un middleware que tome el token auth y me lo pase al request como account.
+
+// #region For users to use
 organizationRouter.get("/organization-all", getAllOrganizations); //checked
-organizationRouter.get("/organization-info/", getNamesandCoordinates);
+organizationRouter.get("/organization-info/", getNamesAndCoordinates);
+
+//#endregion
 export default organizationRouter;

@@ -21,8 +21,8 @@ import {
   getAllOrganizationResponse,
   getAllParkingLotRequest,
   getAllParkingLotResponse,
-  getNamesandCoordenatesRequest,
-  getNamesandCoordenatesResponse,
+  getNamesAndCoordinatesRequest,
+  getNamesAndCoordinatesResponse,
   getOrganizationRequest,
   getOrganizationResponse,
   getParkingLotRequest,
@@ -51,7 +51,7 @@ class OrganizationRepository {
       return {
         type: "error",
         errorCode: "exists",
-        errorMessage: "orgzanizationId-already-exists",
+        errorMessage: "organizationId-already-exists",
         statusCode: 409,
       };
     }
@@ -117,7 +117,7 @@ class OrganizationRepository {
 
       //TODO: This iis not deleting everything of the organization : parking-spots
       const result = await this.organizationCollection.deleteOne({
-        type: "organzation",
+        type: "organization",
         organizationId: { $eq: req.account.organizationId },
       });
 
@@ -244,9 +244,9 @@ class OrganizationRepository {
     }
   }
 
-  public async getOrganizationNamesandCoordenates(
-    _req: getNamesandCoordenatesRequest
-  ): Promise<getNamesandCoordenatesResponse> {
+  public async getOrganizationNamesAndCoordinates(
+    _req: getNamesAndCoordinatesRequest
+  ): Promise<getNamesAndCoordinatesResponse> {
     try {
       const organizations = await OrganizationModel.find(
         {},
@@ -314,7 +314,7 @@ class OrganizationRepository {
       return {
         type: "error",
         errorCode: "not-found",
-        errorMessage: "Couldnt found organization",
+        errorMessage: "couldn't found organization",
         statusCode: 409,
       };
     }
@@ -332,7 +332,7 @@ class OrganizationRepository {
     return {
       type: "error",
       errorCode: "server-error",
-      errorMessage: "Couldnt delete parking lot",
+      errorMessage: "couldn't delete parking lot",
       statusCode: 500,
     };
   }
@@ -348,7 +348,7 @@ class OrganizationRepository {
       return {
         type: "error",
         errorCode: "not-found",
-        errorMessage: "Couldnt found organization",
+        errorMessage: "couldn't found organization",
         statusCode: 409,
       };
     }
@@ -419,7 +419,7 @@ class OrganizationRepository {
     return {
       type: "error",
       errorCode: "server-error",
-      errorMessage: "error-creating-parking-lot",
+      errorMessage: "error-creating-parking",
       statusCode: 500,
     };
   }
@@ -428,23 +428,21 @@ class OrganizationRepository {
   ): Promise<removeParkingResponse> {
     const exists = await this.organizationCollection.findOne({
       type: "parking",
-      organizationId: req.account.organizationId,
       _id: new ObjectId(req.parkingId),
     });
     if (!exists) {
       return {
         type: "error",
         errorCode: "not-found",
-        errorMessage: "Couldnt found parking",
+        errorMessage: "couldn't found parking",
         statusCode: 409,
       };
     }
-    const deletingParkingLot = await this.organizationCollection.deleteOne({
-      type: "parking-lot",
-      organizationId: req.account.organizationId,
+    const deletingParking = await this.organizationCollection.deleteOne({
+      type: "parking",
       _id: new ObjectId(req.parkingId),
     });
-    if (deletingParkingLot.acknowledged) {
+    if (deletingParking.acknowledged) {
       return {
         type: "response",
         success: true,
@@ -453,12 +451,12 @@ class OrganizationRepository {
     return {
       type: "error",
       errorCode: "server-error",
-      errorMessage: "Couldnt delete parking lot",
+      errorMessage: "couldn't delete parking",
       statusCode: 500,
     };
   }
 
-  // For driuver users to use
+  // For driver users to use
 
   public async getAllOrganization(
     _req: getAllOrganizationRequest

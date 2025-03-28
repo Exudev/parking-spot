@@ -69,7 +69,7 @@ async function getAllOrganizations(req: Request, res: Response): Promise<void> {
     error(req, res, "server-error", "Internal server error", 500);
   }
 }
-// TODO: check vulnerabiilities
+// TODO: check vulnerabilities
 async function deleteOrganization(req: Request, res: Response): Promise<void> {
   try {
     const organizationId: string = req.params.id;
@@ -113,13 +113,13 @@ async function checkOrganizationExists(
   }
 }
 
-async function getNamesandCoordinates(
+async function getNamesAndCoordinates(
   req: Request,
   res: Response
 ): Promise<void> {
   try {
     const organizations =
-      await OrganizationRepository.getOrganizationNamesandCoordenates({
+      await OrganizationRepository.getOrganizationNamesAndCoordinates({
         type: "request",
       });
     success(req, res, "fetched", JSON.stringify(organizations), 200);
@@ -203,15 +203,53 @@ async function getAllParkingLot(req: Request, res: Response): Promise<void> {
   }
 }
 
+async function addParking(req: Request, res: Response): Promise<void> {
+  try {
+    const { parking } = req.body;
+    if (!req.account) {
+      return error(req, res, "server-error", "Internal server error", 500);
+    }
+    const addingParking = await OrganizationRepository.addParking({
+      type: "request",
+      parking:parking,
+      account: req.account,
+    });
+    success(req, res, "created", JSON.stringify(addingParking), 200);
+  } catch (err) {
+    console.error("Error creating parking:", err);
+    error(req, res, "server-error", "Internal server error", 500);
+  }
+}
+
+async function removeParking(req: Request, res: Response): Promise<void> {
+  try {
+    const { parkingLotId } = req.body;
+    if (!req.account) {
+      return error(req, res, "server-error", "Internal server error", 500);
+    }
+    const removingParkingLot = await OrganizationRepository.removeParkingLot({
+      type: "request",
+      parkingLotId: parkingLotId,
+      account: req.account,
+    });
+    success(req, res, "deleted", JSON.stringify(removingParkingLot), 200);
+  } catch (err) {
+    console.error("Error removing parking lot ", err);
+    error(req, res, "server-error", "Internal server error", 500);
+  }
+}
+
 export {
   createOrganization,
   getOrganization,
   getAllOrganizations,
   deleteOrganization,
   checkOrganizationExists,
-  getNamesandCoordinates,
+  getNamesAndCoordinates,
   addParkingLot,
   removeParkingLot,
   getAllParkingLot,
-  getParkingLot
+  getParkingLot,
+  addParking,
+  removeParking
 };

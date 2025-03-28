@@ -48,8 +48,8 @@ export type checkOrganizationExistsResponse =
     })
   | RepositoryError;
 
-export type getNamesandCoordenatesRequest = WithoutAuthRequest & {};
-export type getNamesandCoordenatesResponse =
+export type getNamesAndCoordinatesRequest = WithoutAuthRequest & {};
+export type getNamesAndCoordinatesResponse =
   | (BaseResponse & {
       organizations: OrganizationLookup[];
     })
