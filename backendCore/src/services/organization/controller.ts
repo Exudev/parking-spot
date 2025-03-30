@@ -187,6 +187,28 @@ async function getParkingLot(req: Request, res: Response): Promise<void> {
   }
 }
 
+async function getParkingsByParkingLot(req: Request, res: Response): Promise<void> {
+  try {
+    const parkingLotId = req.params.id;
+    if (!req.account) {
+      return error(req, res, "server-error", "unauthorized", 401);
+    }
+    const result = await OrganizationRepository.getParkingsByParkingLot({
+      type: "request",
+      account: req.account,
+      parkingLotId: parkingLotId, 
+    });
+    if (result.type === "response") {
+      success(req, res, "fetched", "parkings fetched successfully", 200);
+    } else {
+      error(req, res, "invalid-data", "parkings not found", 404);
+    }
+  } catch (err) {
+    console.error("Error fetching parking-lot:", err);
+    error(req, res, "server-error", "Internal server error", 500);
+  }
+}
+
 async function getAllParkingLot(req: Request, res: Response): Promise<void> {
   try {
     if (!req.account) {
@@ -247,6 +269,7 @@ export {
   checkOrganizationExists,
   getNamesAndCoordinates,
   addParkingLot,
+  getParkingsByParkingLot,
   removeParkingLot,
   getAllParkingLot,
   getParkingLot,

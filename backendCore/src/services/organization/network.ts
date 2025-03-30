@@ -11,6 +11,7 @@ import {
   getAllParkingLot,
   getParkingLot,
   removeParking,
+  getParkingsByParkingLot,
   addParking,
 } from "./controller";
 import {
@@ -64,6 +65,13 @@ organizationRouter.get(
   passport.authenticate("jwt", { session: false }),
   extractAccountFromToken,
   getParkingLot
+);
+
+organizationRouter.get(
+  "parking-lot/parkings/:id",
+  passport.authenticate("jwt", { session: false }),
+  extractAccountFromToken,
+  getParkingsByParkingLot
 );
 
 // TODO: Parking-lot method to bring all parkings of a parking-lot
