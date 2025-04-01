@@ -35,7 +35,7 @@ class UserRepository {
         return { wasCreated: true };
       }
     } catch (error) {
-      throw new RepositoryError("server-error", "server-error", 500, error);
+      throw new RepositoryError("server-error", "server-error", error);
     }
   }
 
@@ -51,7 +51,6 @@ class UserRepository {
           type: "error",
           errorCode: "not-found",
           errorMessage: "user-not-found",
-          statusCode: 404,
         };
       }
 
@@ -62,7 +61,6 @@ class UserRepository {
           type: "error",
           errorCode: "forbidden",
           errorMessage: "username or password are invalid",
-          statusCode: 403,
         };
       }
 
@@ -70,7 +68,7 @@ class UserRepository {
 
       return { type: "response", token };
     } catch (error) {
-      throw new RepositoryError("server-error", "server-error", 500, error);
+      throw new RepositoryError("server-error", "server-error", error);
     }
   }
                                                                                                                           
@@ -79,22 +77,9 @@ class UserRepository {
       const result = await UserModel.deleteOne({ _id: new ObjectId(id) });
       return result;
     } catch (error) {
-      throw new RepositoryError("server-error", "server-error", 500, error);
+      throw new RepositoryError("server-error", "server-error", error);
     }
   }
-
-  // public async getUser(id: string): Promise<User | undefined> {
-  //   try {
-  //     const objectId = new ObjectId(id);
-  //     const findinguser = await UserModel.findById(objectId).exec();
-
-  //     return {
-      
-  //     };
-  //   } catch (error) {
-  //     throw new RepositoryError("server-error", "server-error", 500, error);
-  //   }
-  // }
 
   public async findByEmail(email: string): Promise<findByEmailResponse> {
     try {
@@ -107,8 +92,6 @@ class UserRepository {
           type:"error",
           errorCode:"not-found",
           errorMessage:"user-not-found",
-          statusCode:404,
-
         };
       }
       return {
@@ -125,7 +108,7 @@ class UserRepository {
         }
       };
     } catch (error) {
-      throw new RepositoryError("server-error", "server-error", 500, error);
+      throw new RepositoryError("server-error", "server-error", error);
     }
   }
   

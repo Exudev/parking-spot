@@ -1,7 +1,7 @@
 import express from "express";
 import { createUser } from "./controller";
 
-import passport = require("passport");
+import passport from "passport";
 import jwt from "jsonwebtoken";
 import { SECRET_KEY_JWT } from "../../constants/env";
 const userRouter = express.Router();

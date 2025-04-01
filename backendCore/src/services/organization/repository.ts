@@ -53,7 +53,6 @@ class OrganizationRepository {
         type: "error",
         errorCode: "exists",
         errorMessage: "organizationId-already-exists",
-        statusCode: 409,
       };
     }
     const createOrg = await this.organizationCollection.insertOne({
@@ -85,7 +84,6 @@ class OrganizationRepository {
           type: "error",
           errorCode: "server-error",
           errorMessage: "error-creating-user",
-          statusCode: 500,
         };
       }
     }
@@ -99,7 +97,6 @@ class OrganizationRepository {
       type: "error",
       errorCode: "server-error",
       errorMessage: "error-creating-organization",
-      statusCode: 500,
     };
   }
   public async deleteOrganization(
@@ -112,7 +109,6 @@ class OrganizationRepository {
           type: "error",
           errorCode: "invalid-data",
           errorMessage: "provided organization Id does not match",
-          statusCode: 500,
         };
       }
 
@@ -144,7 +140,6 @@ class OrganizationRepository {
           type: "error",
           errorCode: "server-error",
           errorMessage: "error deleting parking lots",
-          statusCode: 500,
         };
       }
 
@@ -159,7 +154,6 @@ class OrganizationRepository {
             type: "error",
             errorCode: "server-error",
             errorMessage: "error deleting parking",
-            statusCode: 500,
           };
         }
       }
@@ -174,7 +168,6 @@ class OrganizationRepository {
           type: "error",
           errorCode: "server-error",
           errorMessage: "error-deleting-organization",
-          statusCode: 500,
         };
       }
     } catch (error) {
@@ -183,7 +176,6 @@ class OrganizationRepository {
         type: "error",
         errorCode: "server-error",
         errorMessage: "server-error",
-        statusCode: 500,
       };
     }
   }
@@ -211,7 +203,6 @@ class OrganizationRepository {
           type: "error",
           errorCode: "not-found",
           errorMessage: "organization-not-found",
-          statusCode: 404,
         };
     } catch (error) {
       console.error("Error occurred during searching organization:", error);
@@ -240,7 +231,6 @@ class OrganizationRepository {
         type: "error",
         errorCode: "server-error",
         errorMessage: "server-error",
-        statusCode: 500,
       };
     }
   }
@@ -263,7 +253,6 @@ class OrganizationRepository {
         type: "error",
         errorCode: "server-error",
         errorMessage: "server-error",
-        statusCode: 500,
       };
     }
   }
@@ -274,21 +263,20 @@ class OrganizationRepository {
     const exists = await this.organizationCollection.findOne({
       type: "parking-lot",
       organizationId: req.account.organizationId,
-      name: req.parkingLot.name,
+      name: req.name,
     });
     if (exists?._id) {
       return {
         type: "error",
         errorCode: "exists",
         errorMessage: "already-exists",
-        statusCode: 409,
       };
     }
     const createParkingLot = await this.organizationCollection.insertOne({
       type: "parking-lot",
       organizationId: req.account.organizationId,
-      name: req.parkingLot.name,
-      location: req.parkingLot.location,
+      name: req.name,
+      location: req.location,
     });
     if (createParkingLot.insertedId) {
       return {
@@ -300,7 +288,6 @@ class OrganizationRepository {
       type: "error",
       errorCode: "server-error",
       errorMessage: "error-creating-parking-lot",
-      statusCode: 500,
     };
   }
   public async removeParkingLot(
@@ -316,7 +303,6 @@ class OrganizationRepository {
         type: "error",
         errorCode: "not-found",
         errorMessage: "couldn't found organization",
-        statusCode: 409,
       };
     }
     const deletingParkingLot = await this.organizationCollection.deleteOne({
@@ -334,7 +320,6 @@ class OrganizationRepository {
       type: "error",
       errorCode: "server-error",
       errorMessage: "couldn't delete parking lot",
-      statusCode: 500,
     };
   }
   public async getParkingLot(
@@ -350,7 +335,6 @@ class OrganizationRepository {
         type: "error",
         errorCode: "not-found",
         errorMessage: "couldn't found organization",
-        statusCode: 409,
       };
     }
     const parkingLot: ParkingLot = {
@@ -378,7 +362,6 @@ class OrganizationRepository {
         type: "error",
         errorCode: "not-found",
         errorMessage: "couldn't found organization",
-        statusCode: 409,
       };
     }
     const parkingLot: ParkingLot = {
@@ -418,7 +401,6 @@ class OrganizationRepository {
         type: "error",
         errorCode: "not-found",
         errorMessage: "parking lot not found",
-        statusCode: 409,
       };
     }
     const exists = await this.organizationCollection.findOne({
@@ -431,7 +413,6 @@ class OrganizationRepository {
         type: "error",
         errorCode: "exists",
         errorMessage: "already exists",
-        statusCode: 400,
       };
     }
     const createParking = await this.organizationCollection.insertOne({
@@ -449,7 +430,6 @@ class OrganizationRepository {
       type: "error",
       errorCode: "server-error",
       errorMessage: "error-creating-parking",
-      statusCode: 500,
     };
   }
   public async removeParking(
@@ -464,7 +444,6 @@ class OrganizationRepository {
         type: "error",
         errorCode: "not-found",
         errorMessage: "couldn't found parking",
-        statusCode: 409,
       };
     }
     const deletingParking = await this.organizationCollection.deleteOne({
@@ -481,9 +460,8 @@ class OrganizationRepository {
       type: "error",
       errorCode: "server-error",
       errorMessage: "couldn't delete parking",
-      statusCode: 500,
     };
-  }
+  } 
 
   // For driver users to use
 
@@ -502,7 +480,6 @@ class OrganizationRepository {
         type: "error",
         errorCode: "server-error",
         errorMessage: "Error occurred during fetching all organizations",
-        statusCode: 500,
       };
     }
   }

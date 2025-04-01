@@ -15,7 +15,7 @@ declare global {
     }
 
     interface Request {
-      account?: AccountOrganizationToken & JwtPayload; // Agregamos el tipo correcto
+      account?: AccountOrganizationToken & JwtPayload;
     }
   }
 }

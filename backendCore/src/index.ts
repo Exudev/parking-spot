@@ -1,27 +1,25 @@
-import express, {Application} from 'express';
-
+import express, { Application } from 'express';
 import "dotenv/config";
-import { APP_ORIGIN, MAXRETRYATTEMPTS, PORT } from './constants/env';
-import connectDB from './config/mongo';
-import cors from "cors";
-import routes from './network/routes';
-import errorMiddleware from './middlewares/errorMiddleware';
-import cookieParser from 'cookie-parser';
 import passport from 'passport';
-
+import routes from './network/routes';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import connectDB from './config/mongo';
+import { APP_ORIGIN, PORT, MAXRETRYATTEMPTS } from './constants/env';
+import './utils/auth/index';
 const app: Application = express();
 connectDB();
 
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({origin: APP_ORIGIN, credentials:true}));
-require("./utils/auth");
+app.use(cors({ origin: APP_ORIGIN, credentials: true }));
 app.use('/app', express.static('./public'));
 app.use(cookieParser());
-app.use(errorMiddleware);
-app.use(passport.initialize());
+app.use(passport.initialize()); 
+
+
 routes(app);
+
 let retryAttempts = 0;
 const maxRetryAttempts = Number.parseInt(MAXRETRYATTEMPTS);
 

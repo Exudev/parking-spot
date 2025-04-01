@@ -10,7 +10,7 @@ export type errorCode =
 export type responseCode = "created" | "updated" | "fetched" | "deleted";
 export type permissionType = "admin"|"moderator";
 export type organizationPlan= "basic"|"normal"|"premium";
-interface GeoJSONPoint {
+export interface GeoJSONPoint {
   type: "Point";
   coordinates: [number, number];
 }

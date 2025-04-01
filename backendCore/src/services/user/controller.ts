@@ -19,7 +19,7 @@ async function createUser(
     }
   } catch (err) {
     console.error("Error creating user:", err);
-    next(new AppError("error", 400, "server-error", "server-error", err));
+    next(new AppError("error", "server-error", "server-error", err));
   }
 }
 
@@ -36,7 +36,7 @@ async function login(
       username: email,
     });
     if (auth.type !== "response") {
-      error(req, res, auth.errorCode, auth.errorMessage, auth.statusCode);
+      error(req, res, auth.errorCode, auth.errorMessage);
     }
     if (auth.type === "response") {
       res.cookie("access_token", auth.token, {

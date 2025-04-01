@@ -56,7 +56,7 @@ organizationRouter.delete(
 organizationRouter.get(
   "parking-lot/",
   passport.authenticate("jwt", { session: false }),
-  extractAccountFromToken,
+  extractAccountFromToken, 
   getAllParkingLot
 );
 
@@ -74,12 +74,10 @@ organizationRouter.get(
   getParkingsByParkingLot
 );
 
-// TODO: Parking-lot method to bring all parkings of a parking-lot
 
 // #endregion
 
-
-//#region parking 
+//#region parking
 organizationRouter.post(
   "/parking",
   passport.authenticate("jwt", { session: false }),
@@ -92,7 +90,7 @@ organizationRouter.delete(
   extractAccountFromToken,
   removeParking
 );
-//#endregion 
+//#endregion
 
 //#endregion
 

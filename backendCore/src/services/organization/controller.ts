@@ -16,7 +16,7 @@ async function createOrganization(req: Request, res: Response): Promise<void> {
         settings: {
           owner: user.email,
           active: false,
-          plan:plan,
+          plan: plan,
         },
         location: location,
         locationDelta: locationDelta,
@@ -131,13 +131,15 @@ async function getNamesAndCoordinates(
 
 async function addParkingLot(req: Request, res: Response): Promise<void> {
   try {
-    const { parkingLot } = req.body;
+    const { name, description, location } = req.body;
     if (!req.account) {
       return error(req, res, "server-error", "Internal server error", 500);
     }
     const creatingParkingLot = await OrganizationRepository.addParkingLot({
       type: "request",
-      parkingLot: parkingLot,
+      name: name,
+      description: description,
+      location: location,
       account: req.account,
     });
     success(req, res, "created", JSON.stringify(creatingParkingLot), 200);
@@ -174,7 +176,7 @@ async function getParkingLot(req: Request, res: Response): Promise<void> {
     const result = await OrganizationRepository.getParkingLot({
       type: "request",
       account: req.account,
-      parkingLotId: parkingLotId, 
+      parkingLotId: parkingLotId,
     });
     if (result.type === "response") {
       success(req, res, "fetched", "parking-lot fetched successfully", 200);
@@ -187,7 +189,10 @@ async function getParkingLot(req: Request, res: Response): Promise<void> {
   }
 }
 
-async function getParkingsByParkingLot(req: Request, res: Response): Promise<void> {
+async function getParkingsByParkingLot(
+  req: Request,
+  res: Response
+): Promise<void> {
   try {
     const parkingLotId = req.params.id;
     if (!req.account) {
@@ -196,7 +201,7 @@ async function getParkingsByParkingLot(req: Request, res: Response): Promise<voi
     const result = await OrganizationRepository.getParkingsByParkingLot({
       type: "request",
       account: req.account,
-      parkingLotId: parkingLotId, 
+      parkingLotId: parkingLotId,
     });
     if (result.type === "response") {
       success(req, res, "fetched", "parkings fetched successfully", 200);
@@ -233,7 +238,7 @@ async function addParking(req: Request, res: Response): Promise<void> {
     }
     const addingParking = await OrganizationRepository.addParking({
       type: "request",
-      parking:parking,
+      parking: parking,
       account: req.account,
     });
     success(req, res, "created", JSON.stringify(addingParking), 200);
@@ -274,5 +279,5 @@ export {
   getAllParkingLot,
   getParkingLot,
   addParking,
-  removeParking
+  removeParking,
 };

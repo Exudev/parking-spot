@@ -7,6 +7,7 @@ import {
   ParkingLot,
   User,
   Parking,
+  GeoJSONPoint,
 } from "../../types/types";
 import { RepositoryError } from "../../utils/errors";
 
@@ -63,7 +64,9 @@ export type getAllOrganizationResponse =
   | RepositoryError;
 
 export type addParkingLotRequest = BaseRequest & {
-  parkingLot: ParkingLot;
+  name: string;
+  description: string;
+  location: GeoJSONPoint;
 };
 export type addParkingLotResponse =
   | (BaseResponse & {
