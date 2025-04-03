@@ -30,19 +30,19 @@ type ErrorResponse = (
 ) => void;
 
 const errorCodeToStatusCode: Record<errorCode, number> = {
-  forbidden: 403,
-  unauthorized: 401,
-  exists: 409,
+  "forbidden": 403,
+  "unauthorized": 401,
+  "exists": 409,
   "server-error": 500,
   "invalid-data": 400,
   "not-found": 404,
 };
 
 const responseCodeToStatusCode: Record<responseCode, number> = {
-  created: 201,
-  updated: 200,
-  fetched: 200,
-  deleted: 204,
+  "created": 201,
+  "updated": 200,
+  "fetched": 200,
+  "deleted": 204,
 };
 
 function getStatusErrorCode(error: errorCode): number {

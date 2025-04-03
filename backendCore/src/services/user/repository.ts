@@ -39,6 +39,36 @@ class UserRepository {
     }
   }
 
+  public async createOrganizationUser(
+    req: createUserRequest
+  ): Promise<{ wasCreated: true } | undefined> {
+    try {
+      const exists = await this.userCollection.findOne(
+        { username: { $eq: req.user.username } },
+        { collation: { locale: "en", strength: 3 } }
+      );
+      if (exists) {
+        throw new RepositoryError("exists", "already-exists", 409);
+      }
+
+      const hashedPassword = await bcrypt.hash(req.user.password, SALT_ROUNDS);
+      const newUserDB = {
+        email: req.user.email,
+        name: req.user.name,
+        lastName: req.user.lastname,
+        permission: req.user.permissions,
+        password: hashedPassword,
+        username: req.user.username,
+      };
+      const created = await this.userCollection.insertOne(newUserDB);
+      if (created) {
+        return { wasCreated: true };
+      }
+    } catch (error) {
+      throw new RepositoryError("server-error", "server-error", error);
+    }
+  }
+
   public async login(req: loginRequest): Promise<loginResponse> {
     try {
       const user = await this.userCollection.findOne({
@@ -94,6 +124,17 @@ class UserRepository {
           errorMessage:"user-not-found",
         };
       }
+      const organizationUser = await this.userCollection.findOne({
+      type: "organization-user",
+      email:{$eq: email},
+      })
+      if(!organizationUser || organizationUser.type !== "organization-user"){
+        return {
+          type:"error",
+          errorCode:"not-found",
+          errorMessage:"organization-user-not-found",
+        };
+      }
       return {
         type:"response",
         user:{
@@ -103,8 +144,7 @@ class UserRepository {
           lastname: user.lastName,
           permissions: user.permission,
           password:user.password,
-          role:"admin",
-          organizationId:user.organizationId
+          organizationId:organizationUser.organizationId
         }
       };
     } catch (error) {

@@ -37,7 +37,12 @@ export interface User {
   lastname: string;
   permissions: permissionType;
   password: string;
-  role:string,
+}
+
+export interface organizationUser {
+  username: string;
+  organizationId: string;
+  permssions: permissionType;
 }
 
 export interface publicProfile {

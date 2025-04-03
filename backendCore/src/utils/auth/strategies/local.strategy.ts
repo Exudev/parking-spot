@@ -8,7 +8,7 @@ export const localStrategy = new LocalStrategy(
       try {
         const user = await UserRepository.findByEmail(email);
         if (user.type === 'error') {
-          return done(user.errorCode, false);
+          return done(user.errorCode +" : " + user.errorMessage,false);
         } else if (user.type === 'response') {
           const auth = await compareValue(password_check, user.user.password);
           if (!auth) {

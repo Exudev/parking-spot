@@ -2,19 +2,48 @@ import mongoose, { Schema, model, Document } from "mongoose";
 import { permissionType } from "../../types/types";
 import { VerificationCodeType } from "./types";
 
-export interface IUser extends Document {
+// types
+
+export type UserDBModel = {
   type: "user";
   email: string;
-  organizationId:string,
   username: string;
   name: string;
   lastname: string;
-  permission: permissionType;
   active: boolean;
   password: string;
-  comparePassword(_pass: string): Promise<boolean>;
-}
-const UserSchema = new Schema<IUser>(
+};
+
+export type OrganizationUserDBModel = {
+  type: "organization-user";
+  organizationId: string;
+  email: string;
+  username: string;
+  permissions: permissionType;
+};
+
+//Schemas
+const OrganizationUserSchema = new Schema<OrganizationUserDBModel>(
+  {
+    type: {
+      type: String,
+      required: true,
+      enum: ["organization-user"],
+    },
+    email: { type: String, required: true },
+    username: { type: String, required: true },
+    permissions: {
+      type: String,
+      required: true,
+      enum: ["admin", "moderator"],
+      default: "moderator",
+    },
+    organizationId: { type: String, required: true },
+  },
+  { timestamps: true }
+);
+
+const UserSchema = new Schema<UserDBModel>(
   {
     type: {
       type: String,
@@ -22,25 +51,14 @@ const UserSchema = new Schema<IUser>(
       enum: ["user"],
       default: "user",
     },
-    email: { type: String, unique: true, required: true },
+    email: { type: String, required: true },
     username: { type: String, required: true },
     name: { type: String, required: true },
     lastname: { type: String, required: true },
-    permission:{
-      type: String,
-      required: true,
-      enum: ["admin", "moderator","genin"],
-      default: "moderator",
-    },
-    organizationId:{ type: String, required: true },
     active: { type: Boolean, required: true, default: false },
     password: { type: String, required: true },
   },
   { timestamps: true }
-);
-UserSchema.index(
-  { type: 1, name: 1 },
-  { collation: { locale: "en", strength: 3 } }
 );
 export interface IVerificationCode extends Document {
   userId: mongoose.Types.ObjectId;
@@ -60,5 +78,15 @@ const _VerificationCodeSchema = new Schema<IVerificationCode>(
   },
   { timestamps: true }
 );
-export const UserModel = model<IUser>("User", UserSchema);
+// Index
+UserSchema.index(
+  { type: 1, name: 1 },
+  { collation: { locale: "en", strength: 3 } }
+);
+export const UserModel = model<UserDBModel>("User", UserSchema, "users");
+export const OrganizationUserModel = model<OrganizationUserDBModel>(
+  "OrganizationUser",
+  OrganizationUserSchema,
+  "users"
+);
 export const UserCollection = UserModel.collection;

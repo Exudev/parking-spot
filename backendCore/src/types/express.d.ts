@@ -11,7 +11,6 @@ declare global {
     interface User {
       email: string;
       username: string;
-      role: string;
     }
 
     interface Request {

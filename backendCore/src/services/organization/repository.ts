@@ -72,11 +72,9 @@ class OrganizationRepository {
       const user = await this.userCollection.insertOne({
         type: "user",
         email: req.user.email,
-        organizationId: req.organization.organizationId,
         username: req.user.username,
         name: req.user.name,
         lastName: req.user.lastname,
-        permission: req.user.permissions,
         password: hashedPassword,
       });
       if (!user.insertedId) {
@@ -87,7 +85,23 @@ class OrganizationRepository {
         };
       }
     }
-    if (createOrg.insertedId) {
+    const creatingOrganizationUser = await this.userCollection.insertOne({
+        type:"organization-user",
+        organizationId: req.organization.organizationId,
+        username:req.user.username,
+        email: req.user.email,
+        permissiions:"admin",
+    });
+    if (!creatingOrganizationUser.insertedId) {
+      return {
+        type: "error",
+        errorCode: "server-error",
+        errorMessage: "error-creating-organization-user",
+      };
+    }
+
+
+    if (createOrg.insertedId && creatingOrganizationUser.insertedId) {
       return {
         type: "response",
         organizationId: createOrg.insertedId.toString(),
