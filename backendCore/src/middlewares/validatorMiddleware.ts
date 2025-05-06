@@ -1,74 +1,70 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from "express";
 import z from "zod";
 
-// TODO: this needs to validate the whole Request not just the body. 
+// TODO: this needs to validate the whole Request not just the body.
+export const EmptyObjectSchema = z.record(z.never());
 
-
-
-const validateBodyRequest = (schema:z.ZodSchema )=>{
+const validateRequest = (schema: z.ZodSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
-      schema.parse(req.body);
-      next();      
+      console.log("request")
+      console.log(req.body);
+      schema.parse(req);
+      next();
     } catch (error) {
       if (error instanceof z.ZodError) {
         res.status(400).json({
           errors: error.errors.map((e) => ({
-            path: e.path.join('.'),
+            path: e.path.join("."),
             message: e.message,
           })),
         });
       } else {
-        next(error); 
+        next(error);
       }
     }
   };
 };
 
-
-export const createOrganizationRequestSchema = z.object({
-  user: z.object({
-    email:z.string().min(1).max(255),
-    username:z.string().min(1).max(255),
-    name:z.string().min(1).max(25),
-    lastname: z.string().min(1).max(25),
-    userType: z.enum(["user","owner","moderator","admin"]),
-    password: z.string(),
-   confirmPassword: z.string(),
-
-  }),
-    organizationId : z.string().min(1).max(40),
-    name: z.string().min(3).max(70),
-    location: z.object({
-     type: z.literal("Point"),
-     coordinates: z.array(z.number()).length(2,"expecting coordinates are exactly 2 numbers")
+export const createOrganizationRequestSchema = z
+  .object({
+    headers: z.object({}).passthrough(),
+    method: z.literal("POST"),
+    url: z.literal("/organization"),
+    body: z.object({
+      user: z.object({
+        email: z.string().min(1).max(255),
+        username: z.string().min(1).max(255),
+        name: z.string().min(1).max(25),
+        lastname: z.string().min(1).max(25),
+        password: z.string(),
+        confirmPassword: z.string(),
+      }),
+      organization: z.object({
+        organizationId: z.string().min(1).max(40),
+        name: z.string().min(3).max(70),
+        location: z.object({
+          type: z.literal("Point"),
+          coordinates: z
+            .array(z.number())
+            .length(2, "expecting coordinates are exactly 2 numbers"),
+        }),
+        locationDelta: z.object({
+          type: z.literal("Point"),
+          coordinates: z
+            .array(z.number())
+            .length(2, "expecting coordinates are exactly 2 numbers"),
+        }),
+      }),
     }),
-    locationDelta: z.object({
-      type: z.literal("Point"),
-      coordinates: z.array(z.number()).length(2,"expecting coordinates are exactly 2 numbers")
-     }),
-  
-}).refine((data)=> data.user.password === data.user.confirmPassword,{
-  message: "Passwords do not match",
-  path:["confirmPassword"]
-});
-// const validateUser = [
-//   check('email').notEmpty().withMessage('Email is required'),
-//   check('username').notEmpty().withMessage('Username is required'),
-//   check('name').notEmpty().withMessage('Name is required'),
-//   check('lastName').notEmpty().withMessage('Lastname is required'),
-//   check('userType').notEmpty().withMessage('User Type is required'),
-//   check('password').notEmpty().withMessage('Password is required'),
-//   (req: Request, res: Response, next: NextFunction) => {
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//       return next(new ValidationError('invalid-data', 'Invalid input',errors.array()));
-//     }
-//     next();
-//   },
-// ];
+    params: EmptyObjectSchema,
+  })
+  .refine(
+    (data) => data.body.user.password === data.body.user.confirmPassword,
+    {
+      message: "Passwords do not match",
+      path: ["confirmPassword"],
+    }
+  );
 
-
-export {
-validateBodyRequest
-};
+export { validateRequest };

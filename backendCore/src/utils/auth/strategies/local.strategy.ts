@@ -6,7 +6,7 @@ export const localStrategy = new LocalStrategy(
     { usernameField: 'email', passwordField: 'password' }, 
     async (email: string, password_check: string, done) => {
       try {
-        const user = await UserRepository.findByEmail(email);
+        const user = await UserRepository.findUserByEmail(email);
         if (user.type === 'error') {
           return done(user.errorCode +" : " + user.errorMessage,false);
         } else if (user.type === 'response') {
@@ -22,5 +22,3 @@ export const localStrategy = new LocalStrategy(
       }
     }
   );
-
-

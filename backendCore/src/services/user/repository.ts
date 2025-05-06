@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import { SALT_ROUNDS } from "../../constants/env";
 import { UserModel, UserCollection } from "./models";
 import { RepositoryError } from "../../utils/errors";
-import { createUserRequest, findByEmailResponse, loginRequest, loginResponse } from "./types";
+import { createUserRequest, findByEmailResponse, findDriverByEmailResponse, loginRequest, loginResponse } from "./types";
 
 import { compareValue, signToken,  } from "../../shared/utils";
 class UserRepository {
@@ -26,7 +26,6 @@ class UserRepository {
         email: req.user.email,
         name: req.user.name,
         lastName: req.user.lastname,
-        permission: req.user.permissions,
         password: hashedPassword,
         username: req.user.username,
       };
@@ -111,7 +110,7 @@ class UserRepository {
     }
   }
 
-  public async findByEmail(email: string): Promise<findByEmailResponse> {
+  public async findUserByEmail(email: string): Promise<findByEmailResponse> {
     try {
       const user = await this.userCollection.findOne({
       type:"user",
@@ -145,6 +144,33 @@ class UserRepository {
           permissions: user.permission,
           password:user.password,
           organizationId:organizationUser.organizationId
+        }
+      };
+    } catch (error) {
+      throw new RepositoryError("server-error", "server-error", error);
+    }
+  }
+  public async findDriverByEmail(email: string): Promise<findDriverByEmailResponse> {
+    try {
+      const user = await this.userCollection.findOne({
+      type:"user",
+      email: {$eq: email}
+      });
+      if(!user || user.type !== "user"){
+        return {
+          type:"error",
+          errorCode:"not-found",
+          errorMessage:"user-not-found",
+        };
+      }
+      return {
+        type:"response",
+        driver:{
+          username: user.username,
+          email: user.email,
+          name: user.name,
+          lastname: user.lastName,
+          password:user.password,
         }
       };
     } catch (error) {

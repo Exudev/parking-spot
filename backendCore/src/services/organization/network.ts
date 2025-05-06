@@ -16,7 +16,7 @@ import {
 } from "./controller";
 import {
   createOrganizationRequestSchema,
-  validateBodyRequest,
+  validateRequest,
 } from "../../middlewares/validatorMiddleware";
 import passport from "passport";
 import { extractAccountFromToken } from "../../middlewares/AuthMiddleware";
@@ -27,7 +27,7 @@ const organizationRouter = express.Router();
 
 organizationRouter.post(
   "/organization",
-  validateBodyRequest(createOrganizationRequestSchema),
+  validateRequest(createOrganizationRequestSchema),
   createOrganization
 ); //checked
 

@@ -8,7 +8,7 @@ export type errorCode =
   | "invalid-data"
   | "not-found";
 export type responseCode = "created" | "updated" | "fetched" | "deleted";
-export type permissionType = "admin"|"moderator";
+export type permissionType = "admin"|"moderator"|"viewer";
 export type organizationPlan= "basic"|"normal"|"premium";
 export interface GeoJSONPoint {
   type: "Point";
@@ -38,11 +38,14 @@ export interface User {
   permissions: permissionType;
   password: string;
 }
+export type Driver = Omit<User,"permissions"| "organizationId">;
+
+export type EmptyObject = Record<string, never>;
 
 export interface organizationUser {
   username: string;
   organizationId: string;
-  permssions: permissionType;
+  permissions: permissionType;
 }
 
 export interface publicProfile {

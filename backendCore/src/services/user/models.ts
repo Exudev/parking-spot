@@ -19,7 +19,7 @@ export type OrganizationUserDBModel = {
   organizationId: string;
   email: string;
   username: string;
-  permissions: permissionType;
+  permissions: [permissionType];
 };
 
 //Schemas
@@ -33,10 +33,10 @@ const OrganizationUserSchema = new Schema<OrganizationUserDBModel>(
     email: { type: String, required: true },
     username: { type: String, required: true },
     permissions: {
-      type: String,
+      type: [String],
       required: true,
-      enum: ["admin", "moderator"],
-      default: "moderator",
+      enum: ["admin", "moderator","viewer"],
+      default: ["moderator"],
     },
     organizationId: { type: String, required: true },
   },
