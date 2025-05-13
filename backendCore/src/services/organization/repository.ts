@@ -61,7 +61,11 @@ class OrganizationRepository {
       name: req.organization.name,
       location: req.organization.location,
       locationDelta: req.organization.locationDelta,
-      settings: req.organization.settings,
+      settings: {
+        owner: req.user.email,
+        plan : "basic",
+        active:false
+      },
     });
     const userExists = await this.userCollection.findOne({
       type: "user",
@@ -100,7 +104,6 @@ class OrganizationRepository {
       };
     }
 
-
     if (createOrg.insertedId && creatingOrganizationUser.insertedId) {
       return {
         type: "response",
@@ -117,7 +120,6 @@ class OrganizationRepository {
     req: deleteOrganizationRequest
   ): Promise<deleteOrganizationResponse> {
     try {
-      // ask for a prompt org id to user and check it
       if (req.organizationId !== req.account.organizationId) {
         return {
           type: "error",

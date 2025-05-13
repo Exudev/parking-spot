@@ -16,6 +16,7 @@ import {
 } from "./controller";
 import {
   createOrganizationRequestSchema,
+  deleteOrganizationRequestSchema,
   validateRequest,
 } from "../../middlewares/validatorMiddleware";
 import passport from "passport";
@@ -29,16 +30,17 @@ organizationRouter.post(
   "/organization",
   validateRequest(createOrganizationRequestSchema),
   createOrganization
-); //checked
+);
 
 organizationRouter.delete(
-  "/organization/:id",
+  "/organization/:id", 
+  validateRequest(deleteOrganizationRequestSchema),
   passport.authenticate("jwt", { session: false }),
   extractAccountFromToken,
   deleteOrganization
 );
-organizationRouter.get("/organization/exists/:name", checkOrganizationExists); //checked
-organizationRouter.get("/organization/:id", getOrganization); //checked
+organizationRouter.get("/organization/exists/:name", checkOrganizationExists);
+organizationRouter.get("/organization/:id", getOrganization);
 
 // #region parking-lot
 organizationRouter.post(
@@ -94,10 +96,8 @@ organizationRouter.delete(
 
 //#endregion
 
-// TODO: Create un middleware que tome el token auth y me lo pase al request como account.
-
 // #region For users to use
-organizationRouter.get("/organization-all", getAllOrganizations); //checked
+organizationRouter.get("/organization-all", getAllOrganizations);
 organizationRouter.get("/organization-info/", getNamesAndCoordinates);
 
 //#endregion

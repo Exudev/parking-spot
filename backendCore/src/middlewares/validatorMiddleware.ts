@@ -1,14 +1,21 @@
 import { Request, Response, NextFunction } from "express";
 import z from "zod";
 
-// TODO: this needs to validate the whole Request not just the body.
-export const EmptyObjectSchema = z.record(z.never());
+const EmptyObjectSchema = z.record(z.never());
+
+const AuthHeadersSchema = z.object({
+  authorization: z
+    .string()
+    .regex(/^Bearer\s.+$/, "Authorization header must be a Bearer token"),
+});
+
+const OrganizationIdSchema = z.string().min(1).max(40);
+
+export const ORGANIZATION_URL_REGEX = /^\/organization\/[\w-]{1,40}$/;
 
 const validateRequest = (schema: z.ZodSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log("request")
-      console.log(req.body);
       schema.parse(req);
       next();
     } catch (error) {
@@ -66,5 +73,14 @@ export const createOrganizationRequestSchema = z
       path: ["confirmPassword"],
     }
   );
+export const deleteOrganizationRequestSchema = z.object({
+  headers: AuthHeadersSchema,
+  method: z.literal("DELETE"),
+  url: z.string().regex(ORGANIZATION_URL_REGEX, "Invalid URL format"),
+  body: EmptyObjectSchema,
+  params: z.object({
+    id: OrganizationIdSchema,
+  }),
+});
 
 export { validateRequest };
