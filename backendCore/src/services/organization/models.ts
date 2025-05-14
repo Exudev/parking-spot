@@ -1,4 +1,4 @@
-import { organizationPlan } from "@src/types/types";
+import { OrganizationPlan } from "@src/types/types";
 import { Schema, model } from "mongoose";
 
 export type OrganizationDBModel = {
@@ -16,7 +16,7 @@ export type OrganizationDBModel = {
   settings: {
     owner: string;
     active: boolean;
-    plan: organizationPlan;
+    plan: OrganizationPlan;
   };
   owner: string;
   createdAt: Date;

@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { SALT_ROUNDS, SECRET_KEY_JWT } from "../constants/env";
-import { permissionType,  } from "@src/types/types";
+import { PermissionType,  } from "@src/types/types";
 export function isValidObjectId(value: string): boolean {
   try {
     new ObjectId(value);
@@ -40,7 +40,7 @@ export const compareValue = async (
 export function signToken(
   email: string,
   username: string,
-  permission: permissionType[],
+  permission: PermissionType[],
   organizationId: string
 ): string {
   const token = jwt.sign(
@@ -60,7 +60,7 @@ export function signToken(
 interface TokenPayload {
   email: string;
   username: string;
-  permissions: permissionType[];
+  permissions: PermissionType[];
   organizationId: string;
   iat: number;
   exp: number; 

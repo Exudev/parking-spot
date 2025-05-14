@@ -1,16 +1,16 @@
-import { errorCode } from "../types/types";
+import { ErrorCode } from "../types/types";
 
 export type ResponseType = "response" | "info" | "error";
 
 class AppError  {
   type: Extract<ResponseType, "error">;
-  errorCode: errorCode;
+  errorCode: ErrorCode;
   errorMessage: string;
   details?: any;
 
   constructor(
     type: Extract<ResponseType, "error">,
-    errorCode: errorCode,
+    errorCode: ErrorCode,
     errorMessage: string,
     details?: any
   ) {
@@ -24,14 +24,14 @@ class AppError  {
 
 
 class ValidationError extends AppError {
-  constructor(errorCode: errorCode, errorMessage = "Invalid input", details?: any) {
+  constructor(errorCode: ErrorCode, errorMessage = "Invalid input", details?: any) {
     super("error", errorCode, errorMessage, details);
   }
 }
 
 class RepositoryError extends AppError {
   constructor(
-    errorCode: errorCode,
+    errorCode: ErrorCode,
     errorMessage: string,
     details?: any
   ) {

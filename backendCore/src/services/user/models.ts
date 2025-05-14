@@ -1,5 +1,5 @@
 import mongoose, { Schema, model, Document } from "mongoose";
-import { permissionType } from "../../types/types";
+import { PermissionType } from "../../types/types";
 import { VerificationCodeType } from "./types";
 
 // types
@@ -19,7 +19,7 @@ export type OrganizationUserDBModel = {
   organizationId: string;
   email: string;
   username: string;
-  permissions: [permissionType];
+  permissions: [PermissionType];
 };
 
 //Schemas

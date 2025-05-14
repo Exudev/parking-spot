@@ -3,14 +3,14 @@ import bcrypt from "bcrypt";
 import { SALT_ROUNDS } from "../../constants/env";
 import { UserModel, UserCollection } from "./models";
 import { RepositoryError } from "../../utils/errors";
-import { createUserRequest, findByEmailResponse, findDriverByEmailResponse, loginRequest, loginResponse } from "./types";
+import { CreateUserRequest, FindByEmailResponse, FindDriverByEmailResponse, LoginRequest, LoginResponse } from "./types";
 
 import { compareValue, signToken,  } from "../../shared/utils";
 class UserRepository {
   private userCollection = UserCollection;
 
   public async createUser(
-    req: createUserRequest
+    req: CreateUserRequest
   ): Promise<{ wasCreated: true } | undefined> {
     try {
       const exists = await this.userCollection.findOne(
@@ -39,7 +39,7 @@ class UserRepository {
   }
 
   public async createOrganizationUser(
-    req: createUserRequest
+    req: CreateUserRequest
   ): Promise<{ wasCreated: true } | undefined> {
     try {
       const exists = await this.userCollection.findOne(
@@ -68,7 +68,7 @@ class UserRepository {
     }
   }
 
-  public async login(req: loginRequest): Promise<loginResponse> {
+  public async login(req: LoginRequest): Promise<LoginResponse> {
     try {
       const user = await this.userCollection.findOne({
         type: "user",
@@ -110,7 +110,7 @@ class UserRepository {
     }
   }
 
-  public async findUserByEmail(email: string): Promise<findByEmailResponse> {
+  public async findUserByEmail(email: string): Promise<FindByEmailResponse> {
     try {
       const user = await this.userCollection.findOne({
       type:"user",
@@ -150,7 +150,7 @@ class UserRepository {
       throw new RepositoryError("server-error", "server-error", error);
     }
   }
-  public async findDriverByEmail(email: string): Promise<findDriverByEmailResponse> {
+  public async findDriverByEmail(email: string): Promise<FindDriverByEmailResponse> {
     try {
       const user = await this.userCollection.findOne({
       type:"user",

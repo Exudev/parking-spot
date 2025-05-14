@@ -11,122 +11,122 @@ import {
 } from "../../types/types";
 import { RepositoryError } from "../../utils/errors";
 
-export type createOrganizationRequest = WithoutAuthRequest & {
+export type CreateOrganizationRequest = WithoutAuthRequest & {
   organization: Organization;
   user: User;
 };
 
-export type createOrganizationResponse =
+export type CreateOrganizationResponse =
   | (BaseResponse & {
       organizationId: string;
     })
   | RepositoryError;
 
-export type deleteOrganizationRequest = BaseRequest & {
+export type DeleteOrganizationRequest = BaseRequest & {
   organizationId: string;
 };
-export type deleteOrganizationResponse =
+export type DeleteOrganizationResponse =
   | (BaseResponse & {
       success: boolean;
     })
   | RepositoryError;
 
-export type getOrganizationRequest = BaseRequest & {
+export type GetOrganizationRequest = BaseRequest & {
   organizationId: string;
 };
-export type getOrganizationResponse =
+export type GetOrganizationResponse =
   | (BaseResponse & {
       organization: Organization;
     })
   | RepositoryError;
 
-export type checkOrganizationExistsRequest = WithoutAuthRequest & {
+export type CheckOrganizationExistsRequest = WithoutAuthRequest & {
   organizationId: string;
 };
-export type checkOrganizationExistsResponse =
+export type CheckOrganizationExistsResponse =
   | (BaseResponse & {
       exists: boolean;
     })
   | RepositoryError;
 
-export type getNamesAndCoordinatesRequest = WithoutAuthRequest & {};
-export type getNamesAndCoordinatesResponse =
+export type GetNamesAndCoordinatesRequest = WithoutAuthRequest & {};
+export type GetNamesAndCoordinatesResponse =
   | (BaseResponse & {
       organizations: OrganizationLookup[];
     })
   | RepositoryError;
 
-export type getAllOrganizationRequest = WithoutAuthRequest;
-export type getAllOrganizationResponse =
+export type GetAllOrganizationRequest = WithoutAuthRequest;
+export type GetAllOrganizationResponse =
   | (BaseResponse & {
       organizations: Organization[];
     })
   | RepositoryError;
 
-export type addParkingLotRequest = BaseRequest & {
+export type AddParkingLotRequest = BaseRequest & {
   name: string;
   description: string;
   location: GeoJSONPoint;
 };
-export type addParkingLotResponse =
+export type AddParkingLotResponse =
   | (BaseResponse & {
       success: boolean;
     })
   | RepositoryError;
 
-export type removeParkingLotRequest = BaseRequest & {
+export type RemoveParkingLotRequest = BaseRequest & {
   parkingLotId: string;
 };
 
-export type removeParkingLotResponse =
+export type RemoveParkingLotResponse =
   | (BaseResponse & {
       success: boolean;
     })
   | RepositoryError;
 
-export type getParkingLotRequest = BaseRequest & {
+export type GetParkingLotRequest = BaseRequest & {
   parkingLotId: string;
 };
 
-export type getParkingLotResponse =
+export type GetParkingLotResponse =
   | (BaseResponse & {
       parkingLot: ParkingLot;
     })
   | RepositoryError;
 
-  export type getParkingsByParkingLotRequest = BaseRequest & {
+  export type GetParkingsByParkingLotRequest = BaseRequest & {
     parkingLotId: string;
   };
   
-  export type getParkingsByParkingLotResponse =
+  export type GetParkingsByParkingLotResponse =
     | (BaseResponse & {
         parkings: Parking[];
       })
     | RepositoryError;
 
     
-export type getAllParkingLotRequest = BaseRequest;
+export type GetAllParkingLotRequest = BaseRequest;
 
-export type getAllParkingLotResponse =
+export type GetAllParkingLotResponse =
   | (BaseResponse & {
       parkingLots: ParkingLot[];
     })
   | RepositoryError;
 
-export type addParkingRequest = BaseRequest & {
+export type AddParkingRequest = BaseRequest & {
   parking: Parking;
 };
-export type addParkingResponse =
+export type AddParkingResponse =
   | (BaseResponse & {
       success: boolean;
     })
   | RepositoryError;
 
-export type removeParkingRequest = BaseRequest & {
+export type RemoveParkingRequest = BaseRequest & {
   organizationId: string;
   parkingId: string;
 };
-export type removeParkingResponse =
+export type RemoveParkingResponse =
   | (BaseResponse & {
       success: boolean;
     })

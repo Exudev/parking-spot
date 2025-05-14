@@ -11,33 +11,33 @@ export const enum VerificationCodeType {
   PasswordReset = "password-reset",
 }
 
-export type createUserRequest = WithoutAuthRequest & {
+export type CreateUserRequest = WithoutAuthRequest & {
   user: User;
 };
 
-export type createUserResponse =
+export type CreateUserResponse =
   | (BaseResponse & {
       username: string;
     })
   | RepositoryError;
 
-export type loginRequest = WithoutAuthRequest & {
+export type LoginRequest = WithoutAuthRequest & {
   username: string;
   password: string;
 };
 
-export type loginResponse =
+export type LoginResponse =
   | (BaseResponse & {
       token: string;
     })
   | RepositoryError;
 
-export type findByEmailResponse =
+export type FindByEmailResponse =
   | (BaseResponse & {
       user: User;
     })
   | RepositoryError;
-export type findDriverByEmailResponse =
+export type FindDriverByEmailResponse =
   | (BaseResponse & {
       driver: Driver;
     })

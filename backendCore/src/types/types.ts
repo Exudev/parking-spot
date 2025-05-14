@@ -1,15 +1,15 @@
 import { AccountOrganizationToken } from "./express";
 
-export type errorCode =
+export type ErrorCode =
   | "forbidden"
   | "unauthorized"
   | "exists"
   | "server-error"
   | "invalid-data"
   | "not-found";
-export type responseCode = "created" | "updated" | "fetched" | "deleted";
-export type permissionType = "admin"|"moderator"|"viewer";
-export type organizationPlan= "basic"|"normal"|"premium";
+export type ResponseCode = "created" | "updated" | "fetched" | "deleted";
+export type PermissionType = "admin"|"moderator"|"viewer";
+export type OrganizationPlan= "basic"|"normal"|"premium";
 export interface GeoJSONPoint {
   type: "Point";
   coordinates: [number, number];
@@ -17,7 +17,7 @@ export interface GeoJSONPoint {
 
 interface OrganizationSettings {
   owner : string;
-  plan:organizationPlan ;
+  plan:OrganizationPlan ;
   active: boolean;
 }
 
@@ -35,20 +35,20 @@ export interface User {
   email: string;
   name: string;
   lastname: string;
-  permissions: permissionType;
+  permissions: [PermissionType];
   password: string;
 }
 export type Driver = Omit<User,"permissions"| "organizationId">;
 
 export type EmptyObject = Record<string, never>;
 
-export interface organizationUser {
+export interface OrganizationUser {
   username: string;
   organizationId: string;
-  permissions: permissionType;
+  permissions: PermissionType;
 }
 
-export interface publicProfile {
+export interface PublicProfile {
   username: string; 
   email: string;
   name: string;

@@ -7,30 +7,30 @@ import {
 } from "./models";
 import { UserCollection } from "../user/models";
 import {
-  addParkingLotRequest,
-  addParkingLotResponse,
-  addParkingRequest,
-  addParkingResponse,
-  checkOrganizationExistsRequest,
-  checkOrganizationExistsResponse,
-  createOrganizationRequest,
-  createOrganizationResponse,
-  deleteOrganizationRequest,
-  deleteOrganizationResponse,
-  getAllOrganizationRequest,
-  getAllOrganizationResponse,
-  getAllParkingLotRequest,
-  getAllParkingLotResponse,
-  getNamesAndCoordinatesRequest,
-  getNamesAndCoordinatesResponse,
-  getOrganizationRequest,
-  getOrganizationResponse,
-  getParkingLotRequest,
-  getParkingLotResponse,
-  getParkingsByParkingLotRequest,
-  removeParkingLotRequest,
-  removeParkingRequest,
-  removeParkingResponse,
+  AddParkingLotRequest,
+  AddParkingLotResponse,
+  AddParkingRequest,
+  AddParkingResponse,
+  CheckOrganizationExistsRequest,
+  CheckOrganizationExistsResponse,
+  CreateOrganizationRequest,
+  CreateOrganizationResponse,
+  DeleteOrganizationRequest,
+  DeleteOrganizationResponse,
+  GetAllOrganizationRequest,
+  GetAllOrganizationResponse,
+  GetAllParkingLotRequest,
+  GetAllParkingLotResponse,
+  GetNamesAndCoordinatesRequest,
+  GetNamesAndCoordinatesResponse,
+  GetOrganizationRequest,
+  GetOrganizationResponse,
+  GetParkingLotRequest,
+  GetParkingLotResponse,
+  GetParkingsByParkingLotRequest,
+  RemoveParkingLotRequest,
+  RemoveParkingRequest,
+  RemoveParkingResponse,
 } from "./types";
 import { hashValue } from "../../shared/utils";
 import { ParkingLot } from "@src/types/types";
@@ -42,13 +42,13 @@ class OrganizationRepository {
 
   // Organization users to use
   public async createOrganization(
-    req: createOrganizationRequest
-  ): Promise<createOrganizationResponse> {
+    req: CreateOrganizationRequest
+  ): Promise<CreateOrganizationResponse> {
     const exists = await this.organizationCollection.findOne({
       type: "organization",
       organizationId: { $eq: req.organization.organizationId },
     });
-    if (exists?._id) {
+    if (exists && exists._id) {
       return {
         type: "error",
         errorCode: "exists",
@@ -63,8 +63,8 @@ class OrganizationRepository {
       locationDelta: req.organization.locationDelta,
       settings: {
         owner: req.user.email,
-        plan : "basic",
-        active:false
+        plan: "basic",
+        active: false,
       },
     });
     const userExists = await this.userCollection.findOne({
@@ -90,11 +90,11 @@ class OrganizationRepository {
       }
     }
     const creatingOrganizationUser = await this.userCollection.insertOne({
-        type:"organization-user",
-        organizationId: req.organization.organizationId,
-        username:req.user.username,
-        email: req.user.email,
-        permissiions:"admin",
+      type: "organization-user",
+      organizationId: req.organization.organizationId,
+      username: req.user.username,
+      email: req.user.email,
+      permissions: "admin",
     });
     if (!creatingOrganizationUser.insertedId) {
       return {
@@ -117,8 +117,8 @@ class OrganizationRepository {
     };
   }
   public async deleteOrganization(
-    req: deleteOrganizationRequest
-  ): Promise<deleteOrganizationResponse> {
+    req: DeleteOrganizationRequest
+  ): Promise<DeleteOrganizationResponse> {
     try {
       if (req.organizationId !== req.account.organizationId) {
         return {
@@ -196,8 +196,8 @@ class OrganizationRepository {
     }
   }
   public async getOrganization(
-    req: getOrganizationRequest
-  ): Promise<getOrganizationResponse> {
+    req: GetOrganizationRequest
+  ): Promise<GetOrganizationResponse> {
     try {
       const organization =
         await OrganizationCollection.findOne<OrganizationDBModel>({
@@ -226,8 +226,8 @@ class OrganizationRepository {
     }
   }
   public async checkOrganizationExists(
-    req: checkOrganizationExistsRequest
-  ): Promise<checkOrganizationExistsResponse> {
+    req: CheckOrganizationExistsRequest
+  ): Promise<CheckOrganizationExistsResponse> {
     try {
       const organizationFound = await OrganizationModel.findOne(
         { organizationId: { $eq: req.organizationId } },
@@ -252,8 +252,8 @@ class OrganizationRepository {
   }
 
   public async getOrganizationNamesAndCoordinates(
-    _req: getNamesAndCoordinatesRequest
-  ): Promise<getNamesAndCoordinatesResponse> {
+    _req: GetNamesAndCoordinatesRequest
+  ): Promise<GetNamesAndCoordinatesResponse> {
     try {
       const organizations = await OrganizationModel.find(
         {},
@@ -274,14 +274,14 @@ class OrganizationRepository {
   }
 
   public async addParkingLot(
-    req: addParkingLotRequest
-  ): Promise<addParkingLotResponse> {
+    req: AddParkingLotRequest
+  ): Promise<AddParkingLotResponse> {
     const exists = await this.organizationCollection.findOne({
       type: "parking-lot",
       organizationId: req.account.organizationId,
       name: req.name,
     });
-    if (exists?._id) {
+    if (exists && exists._id) {
       return {
         type: "error",
         errorCode: "exists",
@@ -307,8 +307,8 @@ class OrganizationRepository {
     };
   }
   public async removeParkingLot(
-    req: removeParkingLotRequest
-  ): Promise<addParkingLotResponse> {
+    req: RemoveParkingLotRequest
+  ): Promise<AddParkingLotResponse> {
     const exists = await this.organizationCollection.findOne({
       type: "parking-lot",
       organizationId: req.account.organizationId,
@@ -339,8 +339,8 @@ class OrganizationRepository {
     };
   }
   public async getParkingLot(
-    req: getParkingLotRequest
-  ): Promise<getParkingLotResponse> {
+    req: GetParkingLotRequest
+  ): Promise<GetParkingLotResponse> {
     const organization = await this.organizationCollection.findOne({
       type: "parking-lot",
       organizationId: req.account.organizationId,
@@ -366,8 +366,8 @@ class OrganizationRepository {
     };
   }
   public async getParkingsByParkingLot(
-    req: getParkingsByParkingLotRequest
-  ): Promise<getParkingLotResponse> {
+    req: GetParkingsByParkingLotRequest
+  ): Promise<GetParkingLotResponse> {
     const organization = await this.organizationCollection.findOne({
       type: "parking-lot",
       organizationId: req.account.organizationId,
@@ -394,8 +394,8 @@ class OrganizationRepository {
   }
 
   public async getAllParkingLot(
-    req: getAllParkingLotRequest
-  ): Promise<getAllParkingLotResponse> {
+    req: GetAllParkingLotRequest
+  ): Promise<GetAllParkingLotResponse> {
     const parkingLots = await ParkingLotModel.find({
       type: "parking-lot",
       organizationId: req.account.organizationId,
@@ -406,7 +406,7 @@ class OrganizationRepository {
       parkingLots: parkingLots,
     };
   }
-  public async addParking(req: addParkingRequest): Promise<addParkingResponse> {
+  public async addParking(req: AddParkingRequest): Promise<AddParkingResponse> {
     const existsParkingLot = await this.organizationCollection.findOne({
       type: "parking-lot",
       organizationId: req.account.organizationId,
@@ -424,7 +424,7 @@ class OrganizationRepository {
       parkingLotId: req.parking.parkingLotId,
       name: req.parking.name,
     });
-    if (exists?._id) {
+    if (exists && exists._id) {
       return {
         type: "error",
         errorCode: "exists",
@@ -449,8 +449,8 @@ class OrganizationRepository {
     };
   }
   public async removeParking(
-    req: removeParkingRequest
-  ): Promise<removeParkingResponse> {
+    req: RemoveParkingRequest
+  ): Promise<RemoveParkingResponse> {
     const exists = await this.organizationCollection.findOne({
       type: "parking",
       _id: new ObjectId(req.parkingId),
@@ -477,13 +477,13 @@ class OrganizationRepository {
       errorCode: "server-error",
       errorMessage: "couldn't delete parking",
     };
-  } 
+  }
 
   // For driver users to use
 
   public async getAllOrganization(
-    _req: getAllOrganizationRequest
-  ): Promise<getAllOrganizationResponse> {
+    _req: GetAllOrganizationRequest
+  ): Promise<GetAllOrganizationResponse> {
     try {
       const organizations = await OrganizationModel.find();
       return {

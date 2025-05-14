@@ -1,16 +1,16 @@
 import { Request, Response } from "express";
 import { Organization, User } from "../../types/types";
 import { success, error } from "../../network/response";
-import { createOrganizationRequest } from "./types";
+import { CreateOrganizationRequest } from "./types";
 import OrganizationRepository from "./repository";
 
 async function createOrganization(req: Request, res: Response): Promise<void> {
   try {
-    const  organization : Organization = req.body.organization;
+    const organization: Organization = req.body.organization;
     const user: User = req.body.user;
-    const request: createOrganizationRequest = {
+    const request: CreateOrganizationRequest = {
       type: "request",
-      organization:organization,
+      organization: organization,
       user: user,
     };
     const newOrganization = await OrganizationRepository.createOrganization(
