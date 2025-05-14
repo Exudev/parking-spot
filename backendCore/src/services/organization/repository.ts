@@ -174,6 +174,17 @@ class OrganizationRepository {
         }
       }
 
+      const removingUser = await this.userCollection.deleteMany({
+        type: "organization-user",
+        organizationId: { $eq: req.account.organizationId },
+      });
+      if (!removingUser.acknowledged) {
+        return {
+          type: "error",
+          errorCode: "server-error",
+          errorMessage: "error deleting users",
+        };
+      }
       if (result.acknowledged) {
         return {
           type: "response",
