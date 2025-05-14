@@ -1,4 +1,4 @@
-import { AccountOrganizationToken } from "./express";
+import { AccountOrganizationToken, PermissionType } from "./express";
 
 export type ErrorCode =
   | "forbidden"
@@ -8,7 +8,6 @@ export type ErrorCode =
   | "invalid-data"
   | "not-found";
 export type ResponseCode = "created" | "updated" | "fetched" | "deleted";
-export type PermissionType = "admin"|"moderator"|"viewer";
 export type OrganizationPlan= "basic"|"normal"|"premium";
 export interface GeoJSONPoint {
   type: "Point";

@@ -141,7 +141,7 @@ class UserRepository {
           email: user.email,
           name: user.name,
           lastname: user.lastName,
-          permissions: user.permission,
+          permissions: organizationUser.permissions,
           password:user.password,
           organizationId:organizationUser.organizationId
         }

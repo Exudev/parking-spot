@@ -1,6 +1,6 @@
 import mongoose, { Schema, model, Document } from "mongoose";
-import { PermissionType } from "../../types/types";
 import { VerificationCodeType } from "./types";
+import { PermissionType } from "../../types/express";
 
 // types
 

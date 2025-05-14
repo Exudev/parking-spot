@@ -94,7 +94,7 @@ class OrganizationRepository {
       organizationId: req.organization.organizationId,
       username: req.user.username,
       email: req.user.email,
-      permissions: "admin",
+      permissions: ["moderator"],
     });
     if (!creatingOrganizationUser.insertedId) {
       return {

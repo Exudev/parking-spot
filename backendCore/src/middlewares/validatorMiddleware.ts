@@ -83,4 +83,21 @@ export const deleteOrganizationRequestSchema = z.object({
   }),
 });
 
+export const createParkingLotRequestSchema = z.object({
+  headers: AuthHeadersSchema,
+  method: z.literal("POST"),
+  url: z.string().regex(ORGANIZATION_URL_REGEX, "Invalid URL format"),
+  body: z.object({
+      name: z.string().min(3).max(70),
+      location: z.object({
+          type: z.literal("Point"),
+          coordinates: z
+            .array(z.number())
+            .length(2, "expecting coordinates are exactly 2 numbers"),
+      }),
+      description: z.string().min(1),
+  }),
+  params: EmptyObjectSchema
+});
+
 export { validateRequest };

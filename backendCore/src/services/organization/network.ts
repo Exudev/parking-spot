@@ -20,7 +20,7 @@ import {
   validateRequest,
 } from "../../middlewares/validatorMiddleware";
 import passport from "passport";
-import { extractAccountFromToken } from "../../middlewares/AuthMiddleware";
+import { checkPermissions, extractAccountFromToken } from "../../middlewares/AuthMiddleware";
 
 const organizationRouter = express.Router();
 
@@ -34,8 +34,9 @@ organizationRouter.post(
 
 organizationRouter.delete(
   "/organization/:id", 
-  validateRequest(deleteOrganizationRequestSchema),
   passport.authenticate("jwt", { session: false }),
+  checkPermissions(['admin']),
+  validateRequest(deleteOrganizationRequestSchema),
   extractAccountFromToken,
   deleteOrganization
 );

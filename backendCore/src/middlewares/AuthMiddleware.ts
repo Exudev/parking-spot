@@ -1,8 +1,7 @@
-import { AccountOrganizationToken } from "../types/express";
+import { AccountOrganizationToken, PermissionType } from "../types/express";
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { SECRET_KEY_JWT } from "../constants/env";
-
 
 export const extractAccountFromToken = (
   req: Request,
@@ -26,3 +25,16 @@ export const extractAccountFromToken = (
     return res.status(401).json({ message: error });
   }
 };
+
+export function checkPermissions(permissions: PermissionType[]) {
+  return (  req: Request,
+  res: Response,
+  next: NextFunction) => {
+    const user = req.user;
+    if (user && permissions.some((perm) => user.permissions.includes(perm))) {
+      return next();
+    }
+    return res.status(401).json({ message: 'unauthorized' });
+    
+  };
+}

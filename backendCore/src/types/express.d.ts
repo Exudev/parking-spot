@@ -1,8 +1,8 @@
 import { JwtPayload } from 'jsonwebtoken';
-
+export type PermissionType = "admin"|"moderator"|"viewer";
 export type AccountOrganizationToken = {
     username: string;
-    permission: string;
+    permissions: PermissionType[];
     organizationId: string;
 };
 
@@ -11,6 +11,7 @@ declare global {
     interface User {
       email: string;
       username: string;
+      permissions: PermissionType[];
     }
 
     interface Request {
