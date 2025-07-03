@@ -28,6 +28,8 @@ import {
   GetParkingLotRequest,
   GetParkingLotResponse,
   GetParkingsByParkingLotRequest,
+  GetParkingSpotsByParkingLotRequest,
+  GetParkingSpotsByParkingLotResponse,
   RemoveParkingLotRequest,
   RemoveParkingRequest,
   RemoveParkingResponse,
@@ -489,6 +491,29 @@ class OrganizationRepository {
       errorMessage: "couldn't delete parking",
     };
   }
+
+  // public async getParkingSpotsByParkingLot(
+  //   req: GetParkingSpotsByParkingLotRequest
+  // ): Promise<GetParkingSpotsByParkingLotResponse> {
+  //   const exists = await this.organizationCollection.findOne({
+  //     type: "parking-lot",
+  //     organizationId: req.account.organizationId,
+  //     _id: new ObjectId(req.parkingId),
+  //   });
+
+  //    if (!exists) {
+  //     return {
+  //       type: "error",
+  //       errorCode: "not-found",
+  //       errorMessage: "couldn't found parking-lot",
+  //     };
+  //   }
+  //   const parkingSpots = await this.organizationCollection.find({
+  //     type: "parking-spots",
+
+
+  //   })
+  // }
 
   // For driver users to use
 

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { User } from "../../types/types";
+import { Driver, User } from "../../types/types";
 import userRepository from "./repository";
 import { success, error } from "../../network/response";
 import { AppError, ValidationError } from "../../utils/errors";
@@ -22,7 +22,24 @@ async function createUser(
     next(new AppError("error", "server-error", "server-error", err));
   }
 }
-
+async function createDriver(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const driver: Driver = req.body;
+    const newUser = await userRepository.createDriver({type:'request', driver:driver});
+    if (newUser) {
+      success(req, res, "created", "driver created successfully", 201);
+    } else {
+      next(new ValidationError("server-error", "Failed to create driver"));
+    }
+  } catch (err) {
+    console.error("Error creating user:", err);
+    next(new AppError("error", "server-error", "server-error", err));
+  }
+}
 async function login(
   req: Request,
   res: Response,
@@ -51,4 +68,4 @@ async function login(
     error(req, res, "server-error", "server-error", 500);
   }
 }
-export { createUser, login };
+export { createUser,createDriver, login };

@@ -15,6 +15,10 @@ export type CreateUserRequest = WithoutAuthRequest & {
   user: User;
 };
 
+export type CreateDriverRequest = WithoutAuthRequest & {
+  driver: Driver;
+};
+
 export type CreateUserResponse =
   | (BaseResponse & {
       username: string;

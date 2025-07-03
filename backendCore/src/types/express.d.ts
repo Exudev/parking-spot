@@ -11,7 +11,7 @@ declare global {
     interface User {
       email: string;
       username: string;
-      permissions: PermissionType[];
+      permissions?: PermissionType[];
     }
 
     interface Request {

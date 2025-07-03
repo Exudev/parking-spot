@@ -13,6 +13,9 @@ export type UserDBModel = {
   active: boolean;
   password: string;
 };
+export type DriverDBModel = Omit<UserDBModel, "type"> & {
+  type: "driver";
+};
 
 export type OrganizationUserDBModel = {
   type: "organization-user";
@@ -60,6 +63,23 @@ const UserSchema = new Schema<UserDBModel>(
   },
   { timestamps: true }
 );
+const DriverSchema = new Schema<DriverDBModel>(
+  {
+    type: {
+      type: String,
+      required: true,
+      enum: ["driver"],
+      default: "driver",
+    },
+    email: { type: String, required: true },
+    username: { type: String, required: true },
+    name: { type: String, required: true },
+    lastname: { type: String, required: true },
+    active: { type: Boolean, required: true, default: false },
+    password: { type: String, required: true },
+  },
+  { timestamps: true }
+);
 export interface IVerificationCode extends Document {
   userId: mongoose.Types.ObjectId;
   type: VerificationCodeType;
@@ -87,6 +107,11 @@ export const UserModel = model<UserDBModel>("User", UserSchema, "users");
 export const OrganizationUserModel = model<OrganizationUserDBModel>(
   "OrganizationUser",
   OrganizationUserSchema,
+  "users"
+);
+export const DriverModel = model<DriverDBModel>(
+  "Driver",
+  DriverSchema,
   "users"
 );
 export const UserCollection = UserModel.collection;

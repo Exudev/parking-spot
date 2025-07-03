@@ -73,6 +73,17 @@ export const createOrganizationRequestSchema = z
       path: ["confirmPassword"],
     }
   );
+export const loginRequestSchema = z.object({
+  headers: z.object({}).passthrough(),
+  method: z.literal("POST"),
+  url: z.literal("/login"),
+  body: z.object({
+    email: z.string().min(1).max(255),
+    password: z.string(),
+    userType: z.enum(["user-driver","organization-user"]),
+  }),
+  params: EmptyObjectSchema,
+});
 export const deleteOrganizationRequestSchema = z.object({
   headers: AuthHeadersSchema,
   method: z.literal("DELETE"),
@@ -88,16 +99,16 @@ export const createParkingLotRequestSchema = z.object({
   method: z.literal("POST"),
   url: z.string().regex(ORGANIZATION_URL_REGEX, "Invalid URL format"),
   body: z.object({
-      name: z.string().min(3).max(70),
-      location: z.object({
-          type: z.literal("Point"),
-          coordinates: z
-            .array(z.number())
-            .length(2, "expecting coordinates are exactly 2 numbers"),
-      }),
-      description: z.string().min(1),
+    name: z.string().min(3).max(70),
+    location: z.object({
+      type: z.literal("Point"),
+      coordinates: z
+        .array(z.number())
+        .length(2, "expecting coordinates are exactly 2 numbers"),
+    }),
+    description: z.string().min(1),
   }),
-  params: EmptyObjectSchema
+  params: EmptyObjectSchema,
 });
 
 export { validateRequest };

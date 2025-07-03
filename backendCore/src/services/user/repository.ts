@@ -3,9 +3,16 @@ import bcrypt from "bcrypt";
 import { SALT_ROUNDS } from "../../constants/env";
 import { UserModel, UserCollection } from "./models";
 import { RepositoryError } from "../../utils/errors";
-import { CreateUserRequest, FindByEmailResponse, FindDriverByEmailResponse, LoginRequest, LoginResponse } from "./types";
+import {
+  CreateDriverRequest,
+  CreateUserRequest,
+  FindByEmailResponse,
+  FindDriverByEmailResponse,
+  LoginRequest,
+  LoginResponse,
+} from "./types";
 
-import { compareValue, signToken,  } from "../../shared/utils";
+import { compareValue, hashValue, signToken } from "../../shared/utils";
 class UserRepository {
   private userCollection = UserCollection;
 
@@ -74,7 +81,7 @@ class UserRepository {
         type: "user",
         email: { $eq: req.username },
       });
-      console.log(user);
+      console.log("pasa por user/repository/login");
       if (!user) {
         return {
           type: "error",
@@ -83,7 +90,7 @@ class UserRepository {
         };
       }
 
-      const auth = await compareValue(req.password,user.password);
+      const auth = await compareValue(req.password, user.password);
       console.log(auth);
       if (!auth) {
         return {
@@ -93,15 +100,20 @@ class UserRepository {
         };
       }
 
-      const token = signToken(user.email,user.username, user.userType,user.organizationId);
+      const token = signToken(
+        user.email,
+        user.username,
+        user.userType,
+        user.organizationId
+      );
 
       return { type: "response", token };
     } catch (error) {
       throw new RepositoryError("server-error", "server-error", error);
     }
   }
-                                                                                                                          
-   public async deleteUser(id: string): Promise<{ deletedCount?: number }> {
+
+  public async deleteUser(id: string): Promise<{ deletedCount?: number }> {
     try {
       const result = await UserModel.deleteOne({ _id: new ObjectId(id) });
       return result;
@@ -112,72 +124,109 @@ class UserRepository {
 
   public async findUserByEmail(email: string): Promise<FindByEmailResponse> {
     try {
+      console.log("pasa por findUserByEmail")
       const user = await this.userCollection.findOne({
-      type:"user",
-      email: {$eq: email}
+        type: "user",
+        email: { $eq: email },
       });
-      if(!user || user.type !== "user"){
+      if (!user || user.type !== "user") {
         return {
-          type:"error",
-          errorCode:"not-found",
-          errorMessage:"user-not-found",
+          type: "error",
+          errorCode: "not-found",
+          errorMessage: "user-not-found",
         };
       }
       const organizationUser = await this.userCollection.findOne({
-      type: "organization-user",
-      email:{$eq: email},
-      })
-      if(!organizationUser || organizationUser.type !== "organization-user"){
+        type: "organization-user",
+        email: { $eq: email },
+      });
+      if (!organizationUser || organizationUser.type !== "organization-user") {
         return {
-          type:"error",
-          errorCode:"not-found",
-          errorMessage:"organization-user-not-found",
+          type: "error",
+          errorCode: "not-found",
+          errorMessage: "organization-user-not-found",
         };
       }
       return {
-        type:"response",
-        user:{
+        type: "response",
+        user: {
           username: user.username,
           email: user.email,
           name: user.name,
           lastname: user.lastName,
           permissions: organizationUser.permissions,
-          password:user.password,
-          organizationId:organizationUser.organizationId
-        }
+          password: user.password,
+          organizationId: organizationUser.organizationId,
+        },
       };
     } catch (error) {
       throw new RepositoryError("server-error", "server-error", error);
     }
   }
-  public async findDriverByEmail(email: string): Promise<FindDriverByEmailResponse> {
+  public async findDriverByEmail(
+    email: string
+  ): Promise<FindDriverByEmailResponse> {
     try {
       const user = await this.userCollection.findOne({
-      type:"user",
-      email: {$eq: email}
+        type: "driver",
+        email: { $eq: email },
       });
-      if(!user || user.type !== "user"){
+      console.log(user, "420")
+      if (!user || user.type !== "driver") {
+        console.log("es aqui")
         return {
-          type:"error",
-          errorCode:"not-found",
-          errorMessage:"user-not-found",
+          type: "error",
+          errorCode: "not-found",
+          errorMessage: "driver-not-found",
         };
       }
       return {
-        type:"response",
-        driver:{
+        type: "response",
+        driver: {
           username: user.username,
           email: user.email,
           name: user.name,
           lastname: user.lastName,
-          password:user.password,
-        }
+          password: user.password,
+        },
       };
     } catch (error) {
       throw new RepositoryError("server-error", "server-error", error);
     }
   }
-  
+
+  // user drivers
+  public async createDriver(
+    req: CreateDriverRequest
+  ): Promise<{ wasCreated: true } | undefined> {
+    try {
+      const exists = await this.userCollection.findOne(
+        { type: "driver", username: { $eq: req.driver.username } },
+        { collation: { locale: "en", strength: 3 } }
+      );
+      if (exists) {
+        throw new RepositoryError("exists", "already-exists", 409);
+      }
+
+      const hashedPassword = await hashValue(
+        req.driver.password,
+      );
+      const created = await this.userCollection.insertOne({
+        type:"driver",
+        email: req.driver.email,
+        name: req.driver.name,
+        lastName: req.driver.lastname,
+        password: hashedPassword,
+        username: req.driver.username,
+      });
+      if (created) {
+        return { wasCreated: true };
+      }
+    } catch (error) {
+      console.log(error);
+      throw new RepositoryError("server-error", "server-error", error);
+    }
+  }
 }
 
 export default new UserRepository();

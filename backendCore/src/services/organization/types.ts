@@ -123,10 +123,18 @@ export type AddParkingResponse =
   | RepositoryError;
 
 export type RemoveParkingRequest = BaseRequest & {
-  organizationId: string;
   parkingId: string;
 };
 export type RemoveParkingResponse =
+  | (BaseResponse & {
+      success: boolean;
+    })
+  | RepositoryError;
+
+  export type GetParkingSpotsByParkingLotRequest = BaseRequest & {
+  parkingId: string;
+};
+export type GetParkingSpotsByParkingLotResponse =
   | (BaseResponse & {
       success: boolean;
     })
