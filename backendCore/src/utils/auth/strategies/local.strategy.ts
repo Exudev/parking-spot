@@ -10,10 +10,7 @@ export const localStrategy = new LocalStrategy(
   },
   async (req, email: string, password_check: string, done) => {
     try {
-      console.log("pasa por aqui utils/auth/strategies");
-      const userType = req.body.userType;
-      console.log("userType:", userType);
-      if (userType === "organization-user") {
+      if (req.body?.userType === "organization-user") {
         const user = await UserRepository.findUserByEmail(email);
         if (user.type === "error") {
           return done(user.errorCode + " : " + user.errorMessage, false);
@@ -30,12 +27,15 @@ export const localStrategy = new LocalStrategy(
           } = user.user;
           return done(undefined, safeUser);
         }
-      } else if (userType === "user-driver") {
-         const driver = await UserRepository.findDriverByEmail(email);
+      } else if (req.body?.userType === "user-driver") {
+        const driver = await UserRepository.findDriverByEmail(email);
         if (driver.type === "error") {
           return done(driver.errorCode + " : " + driver.errorMessage, false);
         } else if (driver.type === "response") {
-          const auth = await compareValue(password_check, driver.driver.password);
+          const auth = await compareValue(
+            password_check,
+            driver.driver.password
+          );
           if (!auth) {
             return done("forbidden", false);
           }
@@ -47,6 +47,8 @@ export const localStrategy = new LocalStrategy(
           } = driver.driver;
           return done(undefined, safeUser);
         }
+      } else {
+        console.error("INVALID OPTION");
       }
     } catch (error) {
       return done(error, false);

@@ -33,6 +33,9 @@ const validateRequest = (schema: z.ZodSchema) => {
   };
 };
 
+
+// #region endpoints schemas 
+
 export const createOrganizationRequestSchema = z
   .object({
     headers: z.object({}).passthrough(),
@@ -73,6 +76,30 @@ export const createOrganizationRequestSchema = z
       path: ["confirmPassword"],
     }
   );
+export const createDriverRequestSchema = z
+  .object({
+    headers: z.object({}).passthrough(),
+    method: z.literal("POST"),
+    url: z.literal("/driver"),
+    body: z.object({
+      user: z.object({
+        email: z.string().min(1).max(255),
+        username: z.string().min(1).max(255),
+        name: z.string().min(1).max(25),
+        lastname: z.string().min(1).max(25),
+        password: z.string(),
+        confirmPassword: z.string(),
+      }),
+    }),
+    params: EmptyObjectSchema,
+  })
+  .refine(
+    (data) => data.body.user.password === data.body.user.confirmPassword,
+    {
+      message: "Passwords do not match",
+      path: ["confirmPassword"],
+    }
+  );
 export const loginRequestSchema = z.object({
   headers: z.object({}).passthrough(),
   method: z.literal("POST"),
@@ -80,7 +107,7 @@ export const loginRequestSchema = z.object({
   body: z.object({
     email: z.string().min(1).max(255),
     password: z.string(),
-    userType: z.enum(["user-driver","organization-user"]),
+    userType:z.enum(["user-driver","organization-user"])
   }),
   params: EmptyObjectSchema,
 });

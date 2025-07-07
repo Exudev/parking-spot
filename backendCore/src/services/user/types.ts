@@ -25,6 +25,17 @@ export type CreateUserResponse =
     })
   | RepositoryError;
 
+  export type reserveParkingSpotRequest = WithoutAuthRequest & {
+  driver: Driver;
+};
+
+export type reserveParkingSpotResponse =
+  | (BaseResponse & {
+      username: string;
+    })
+  | RepositoryError;
+
+
 export type LoginRequest = WithoutAuthRequest & {
   username: string;
   password: string;

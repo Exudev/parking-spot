@@ -16,47 +16,67 @@ async function createOrganization(req: Request, res: Response): Promise<void> {
     const newOrganization = await OrganizationRepository.createOrganization(
       request
     );
-    if (newOrganization.type === "response") {
-      success(req, res, "created", { newOrganization }, 201);
-    } else {
-      error(req, res, "exists", "already-exists", 500);
+    switch (newOrganization.type) {
+      case "response":
+        success(req, res, "created", newOrganization.organizationId, 201);
+        break;
+      case "error":
+        error(
+          req,
+          res,
+          newOrganization.errorCode,
+          newOrganization.errorMessage
+        );
+        break;
+
+      default:
+        throw new Error("Invalid Option");
     }
   } catch (err) {
-    console.error("Error creating organization:", err);
+    console.error("Error creating organization at controller:", err);
   }
 }
 
 async function getOrganization(req: Request, res: Response): Promise<void> {
   try {
-    const organizationId: string = req.params.id;
     if (!req.account) {
-      return error(req, res, "invalid-data", "Organization not found", 404);
+      return error(req, res, "invalid-data", "Account not provided");
     }
     const organization = await OrganizationRepository.getOrganization({
       type: "request",
-      organizationId: organizationId,
+      organizationId: req.account.organizationId,
       account: req.account,
     });
-    if (organization) {
-      success(req, res, "fetched", { organization }, 200);
-    } else {
-      error(req, res, "invalid-data", "Organization not found", 404);
+    switch (organization.type) {
+      case "response":
+        success(req, res, "fetched", organization.organization, 200);
+
+        break;
+      case "error":
+        error(req, res, organization.errorCode, organization.errorMessage);
+        break;
+      default:
+        throw new Error("Invalid Option");
     }
   } catch (err) {
     console.error("Error fetching organization:", err);
-    error(req, res, "server-error", "Internal server error", 500);
   }
 }
 
 async function getAllOrganizations(req: Request, res: Response): Promise<void> {
   try {
-    const organizations = await OrganizationRepository.getAllOrganization({
-      type: "request",
-    });
-    success(req, res, "fetched", { organizations }, 200);
+    const organizations = await OrganizationRepository.getAllOrganization();
+    switch (organizations.type) {
+      case "response":
+        success(req, res, "created", organizations.organizations, 201);
+        break;
+      case "error":
+        error(req, res, organizations.errorCode, organizations.errorMessage);
+      default:
+        break;
+    }
   } catch (err) {
     console.error("Error fetching organizations:", err);
-    error(req, res, "server-error", "Internal server error", 500);
   }
 }
 // TODO: check vulnerabilities
@@ -71,14 +91,20 @@ async function deleteOrganization(req: Request, res: Response): Promise<void> {
       organizationId: organizationId,
       account: req.account,
     });
-    if (result.type === "response") {
-      success(req, res, "deleted", "Organization deleted successfully", 200);
-    } else {
-      error(req, res, "invalid-data", "Organization not found", 404);
+    switch (result.type) {
+      case "response":
+        success(req, res, "deleted", "Organization deleted successfully");
+
+        break;
+      case "error":
+        error(req, res, result.errorCode, result.errorMessage);
+        break;
+
+      default:
+        throw new Error("Invalid Option");
     }
   } catch (err) {
     console.error("Error deleting organization:", err);
-    error(req, res, "server-error", "Internal server error", 500);
   }
 }
 
@@ -88,18 +114,25 @@ async function checkOrganizationExists(
 ): Promise<void> {
   try {
     const name: string = req.params.name;
-    const exists = await OrganizationRepository.checkOrganizationExists({
+    const result = await OrganizationRepository.checkOrganizationExists({
       type: "request",
       organizationId: name,
     });
-    if (exists) {
-      success(req, res, "fetched", "Organization exists", 200);
-    } else {
-      error(req, res, "invalid-data", "Organization not found", 400);
+    switch (result.type) {
+      case "response":
+        success(req, res, "fetched", { exists: result.exists }, 200);
+
+        break;
+      case "error":
+        error(req, res, result.errorCode, result.errorMessage, 500);
+
+        break;
+
+      default:
+        throw new Error("Invalid Option");
     }
   } catch (err) {
     console.error("Error checking organization existence:", err);
-    error(req, res, "server-error", "Internal server error", 500);
   }
 }
 
@@ -112,10 +145,25 @@ async function getNamesAndCoordinates(
       await OrganizationRepository.getOrganizationNamesAndCoordinates({
         type: "request",
       });
-    success(req, res, "fetched", JSON.stringify(organizations), 200);
+    switch (organizations.type) {
+      case "response":
+        success(req, res, "fetched", JSON.stringify(organizations), 200);
+        break;
+      case "error":
+        error(
+          req,
+          res,
+          organizations.errorCode,
+          organizations.errorMessage,
+          500
+        );
+        break;
+
+      default:
+        throw new Error("Invalid Option");
+    }
   } catch (err) {
     console.error("Error fetching organization names and coordinates:", err);
-    error(req, res, "server-error", "Internal server error", 500);
   }
 }
 
@@ -125,17 +173,26 @@ async function addParkingLot(req: Request, res: Response): Promise<void> {
     if (!req.account) {
       return error(req, res, "server-error", "Internal server error", 500);
     }
-    const creatingParkingLot = await OrganizationRepository.addParkingLot({
+    const result = await OrganizationRepository.addParkingLot({
       type: "request",
       name: name,
       description: description,
       location: location,
       account: req.account,
     });
-    success(req, res, "created", JSON.stringify(creatingParkingLot), 200);
+    switch (result.type) {
+      case "response":
+        success(req, res, "created", { success: result.success });
+        break;
+      case "error":
+        error(req, res, result.errorCode, result.errorMessage);
+        break;
+      default:
+        throw new Error("Invalid Option");
+    }
+    success(req, res, "created", JSON.stringify(result), 200);
   } catch (err) {
     console.error("Error creating parking lot:", err);
-    error(req, res, "server-error", "Internal server error", 500);
   }
 }
 
@@ -145,15 +202,23 @@ async function removeParkingLot(req: Request, res: Response): Promise<void> {
     if (!req.account) {
       return error(req, res, "server-error", "Internal server error", 500);
     }
-    const removingParkingLot = await OrganizationRepository.removeParkingLot({
+    const result = await OrganizationRepository.removeParkingLot({
       type: "request",
       parkingLotId: parkingLotId,
       account: req.account,
     });
-    success(req, res, "deleted", JSON.stringify(removingParkingLot), 200);
+    switch (result.type) {
+      case "response":
+        success(req, res, "deleted", { success: result.success }, 200);
+        break;
+      case "error":
+        error(req, res, result.errorCode, result.errorMessage);
+        break;
+      default:
+        throw new Error("Invalid Option");
+    }
   } catch (err) {
     console.error("Error removing parking lot ", err);
-    error(req, res, "server-error", "Internal server error", 500);
   }
 }
 
@@ -175,7 +240,6 @@ async function getParkingLot(req: Request, res: Response): Promise<void> {
     }
   } catch (err) {
     console.error("Error fetching parking-lot:", err);
-    error(req, res, "server-error", "Internal server error", 500);
   }
 }
 
@@ -193,14 +257,19 @@ async function getParkingsByParkingLot(
       account: req.account,
       parkingLotId: parkingLotId,
     });
-    if (result.type === "response") {
-      success(req, res, "fetched", "parkings fetched successfully", 200);
-    } else {
-      error(req, res, "invalid-data", "parkings not found", 404);
+    switch (result.type) {
+      case "response":
+        success(req, res, "fetched", "parkings fetched successfully");
+        break;
+      case "error":
+        error(req, res, result.errorCode, result.errorMessage);
+
+        break;
+      default:
+        throw new Error("Invalid Option");
     }
   } catch (err) {
-    console.error("Error fetching parking-lot:", err);
-    error(req, res, "server-error", "Internal server error", 500);
+    console.error("Error fetching parkings:", err);
   }
 }
 
@@ -209,14 +278,25 @@ async function getAllParkingLot(req: Request, res: Response): Promise<void> {
     if (!req.account) {
       return error(req, res, "unauthorized", "unauthorized", 500);
     }
-    const removingParkingLot = await OrganizationRepository.getAllParkingLot({
+    const result = await OrganizationRepository.getAllParkingLot({
       type: "request",
       account: req.account,
     });
-    success(req, res, "deleted", JSON.stringify(removingParkingLot), 200);
+
+    switch (result.type) {
+      case "response":
+        success(req, res, "fetched", result.parkingLots, 200);
+
+        break;
+      case "error":
+        error(req, res, result.errorCode, result.errorMessage);
+
+        break;
+      default:
+        throw new Error("Invalid Option");
+    }
   } catch (err) {
-    console.error("Error removing parking lot ", err);
-    error(req, res, "server-error", "Internal server error", 500);
+    console.error("Error fetching parking lot ", err);
   }
 }
 
@@ -226,15 +306,23 @@ async function addParking(req: Request, res: Response): Promise<void> {
     if (!req.account) {
       return error(req, res, "server-error", "Internal server error", 500);
     }
-    const addingParking = await OrganizationRepository.addParking({
+    const result = await OrganizationRepository.addParking({
       type: "request",
       parking: parking,
       account: req.account,
     });
-    success(req, res, "created", JSON.stringify(addingParking), 200);
+    switch (result.type) {
+      case "response":
+        success(req, res, "created", { success: result.success }, 200);
+        break;
+      case "error":
+        error(req, res, result.errorCode, result.errorMessage);
+        break;
+      default:
+        throw new Error("Invalid Option");
+    }
   } catch (err) {
     console.error("Error creating parking:", err);
-    error(req, res, "server-error", "Internal server error", 500);
   }
 }
 
@@ -244,15 +332,24 @@ async function removeParking(req: Request, res: Response): Promise<void> {
     if (!req.account) {
       return error(req, res, "server-error", "Internal server error", 500);
     }
-    const removingParkingLot = await OrganizationRepository.removeParkingLot({
+    const result = await OrganizationRepository.removeParkingLot({
       type: "request",
       parkingLotId: parkingLotId,
       account: req.account,
     });
-    success(req, res, "deleted", JSON.stringify(removingParkingLot), 200);
+    switch (result.type) {
+      case "response":
+        success(req, res, "deleted", { success: result.success });
+
+        break;
+      case "error":
+        error(req, res, result.errorCode, result.errorMessage);
+        break;
+      default:
+        throw new Error("Invalid Option");
+    }
   } catch (err) {
-    console.error("Error removing parking lot ", err);
-    error(req, res, "server-error", "Internal server error", 500);
+    console.error("Error removing parking ", err);
   }
 }
 

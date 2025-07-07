@@ -6,13 +6,12 @@ import { RepositoryError } from "../../utils/errors";
 import {
   CreateDriverRequest,
   CreateUserRequest,
+  CreateUserResponse,
   FindByEmailResponse,
   FindDriverByEmailResponse,
-  LoginRequest,
-  LoginResponse,
 } from "./types";
 
-import { compareValue, hashValue, signToken } from "../../shared/utils";
+import {  hashValue,  } from "../../shared/utils";
 class UserRepository {
   private userCollection = UserCollection;
 
@@ -75,43 +74,41 @@ class UserRepository {
     }
   }
 
-  public async login(req: LoginRequest): Promise<LoginResponse> {
-    try {
-      const user = await this.userCollection.findOne({
-        type: "user",
-        email: { $eq: req.username },
-      });
-      console.log("pasa por user/repository/login");
-      if (!user) {
-        return {
-          type: "error",
-          errorCode: "not-found",
-          errorMessage: "user-not-found",
-        };
-      }
+  // public async login(req: LoginRequest): Promise<LoginResponse> {
+  //   try {
+  //     const user = await this.userCollection.findOne({
+  //       type: "user",
+  //       email: { $eq: req.username },
+  //     });
+  //     if (!user) {
+  //       return {
+  //         type: "error",
+  //         errorCode: "not-found",
+  //         errorMessage: "user-not-found",
+  //       };
+  //     }
 
-      const auth = await compareValue(req.password, user.password);
-      console.log(auth);
-      if (!auth) {
-        return {
-          type: "error",
-          errorCode: "forbidden",
-          errorMessage: "username or password are invalid",
-        };
-      }
+  //     const auth = await compareValue(req.password, user.password);
+  //     if (!auth) {
+  //       return {
+  //         type: "error",
+  //         errorCode: "forbidden",
+  //         errorMessage: "username or password are invalid",
+  //       };
+  //     }
 
-      const token = signToken(
-        user.email,
-        user.username,
-        user.userType,
-        user.organizationId
-      );
+  //     const token = signToken(
+  //       user.email,
+  //       user.username,
+  //       user.userType,
+  //       user.organizationId
+  //     );
 
-      return { type: "response", token };
-    } catch (error) {
-      throw new RepositoryError("server-error", "server-error", error);
-    }
-  }
+  //     return { type: "response", token };
+  //   } catch (error) {
+  //     throw new RepositoryError("server-error", "server-error", error);
+  //   }
+  // }
 
   public async deleteUser(id: string): Promise<{ deletedCount?: number }> {
     try {
@@ -124,7 +121,6 @@ class UserRepository {
 
   public async findUserByEmail(email: string): Promise<FindByEmailResponse> {
     try {
-      console.log("pasa por findUserByEmail")
       const user = await this.userCollection.findOne({
         type: "user",
         email: { $eq: email },
@@ -150,6 +146,7 @@ class UserRepository {
       return {
         type: "response",
         user: {
+          userType :"user",
           username: user.username,
           email: user.email,
           name: user.name,
@@ -171,9 +168,7 @@ class UserRepository {
         type: "driver",
         email: { $eq: email },
       });
-      console.log(user, "420")
       if (!user || user.type !== "driver") {
-        console.log("es aqui")
         return {
           type: "error",
           errorCode: "not-found",
@@ -183,11 +178,13 @@ class UserRepository {
       return {
         type: "response",
         driver: {
+          userType:"driver",
           username: user.username,
           email: user.email,
           name: user.name,
           lastname: user.lastName,
           password: user.password,
+          permissions: user.permissions,
         },
       };
     } catch (error) {
@@ -198,7 +195,7 @@ class UserRepository {
   // user drivers
   public async createDriver(
     req: CreateDriverRequest
-  ): Promise<{ wasCreated: true } | undefined> {
+  ): Promise<CreateUserResponse> {
     try {
       const exists = await this.userCollection.findOne(
         { type: "driver", username: { $eq: req.driver.username } },
@@ -218,15 +215,26 @@ class UserRepository {
         lastName: req.driver.lastname,
         password: hashedPassword,
         username: req.driver.username,
+        permissions: ["driver"],
       });
-      if (created) {
-        return { wasCreated: true };
+      if (created.insertedId) {
+        return { type:"response", username: req.driver.username};
       }
+      return {
+      type: "error",
+      errorCode: "server-error",
+      errorMessage: "couldn't create driver",
+    };
     } catch (error) {
       console.log(error);
       throw new RepositoryError("server-error", "server-error", error);
     }
   }
-}
+//   public async reserveParkingSpots(
+// req:
+//   ): Promise<{ wasCreated: true } | undefined>{
+
+//   }
+ }
 
 export default new UserRepository();

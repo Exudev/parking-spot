@@ -17,7 +17,6 @@ import {
   CreateOrganizationResponse,
   DeleteOrganizationRequest,
   DeleteOrganizationResponse,
-  GetAllOrganizationRequest,
   GetAllOrganizationResponse,
   GetAllParkingLotRequest,
   GetAllParkingLotResponse,
@@ -28,8 +27,6 @@ import {
   GetParkingLotRequest,
   GetParkingLotResponse,
   GetParkingsByParkingLotRequest,
-  GetParkingSpotsByParkingLotRequest,
-  GetParkingSpotsByParkingLotResponse,
   RemoveParkingLotRequest,
   RemoveParkingRequest,
   RemoveParkingResponse,
@@ -289,6 +286,7 @@ class OrganizationRepository {
   public async addParkingLot(
     req: AddParkingLotRequest
   ): Promise<AddParkingLotResponse> {
+    console.log("addparkinglot");
     const exists = await this.organizationCollection.findOne({
       type: "parking-lot",
       organizationId: req.account.organizationId,
@@ -511,15 +509,12 @@ class OrganizationRepository {
   //   const parkingSpots = await this.organizationCollection.find({
   //     type: "parking-spots",
 
-
   //   })
   // }
 
   // For driver users to use
 
-  public async getAllOrganization(
-    _req: GetAllOrganizationRequest
-  ): Promise<GetAllOrganizationResponse> {
+  public async getAllOrganization(): Promise<GetAllOrganizationResponse> {
     try {
       const organizations = await OrganizationModel.find();
       return {

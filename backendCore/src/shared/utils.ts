@@ -33,6 +33,7 @@ export const compareValue = async (
   value: string,
   hashedValue: string
 ): Promise<boolean> => {
+  
   const valid = await bcrypt.compare(value, hashedValue).catch(() => false);
   return valid;
 };
@@ -40,6 +41,7 @@ export const compareValue = async (
 export function signToken(
   email: string,
   username: string,
+  userType:"user"|"driver",
   permission: PermissionType[],
   organizationId: string
 ): string {
@@ -47,6 +49,7 @@ export function signToken(
     {
       email: email,
       username: username,
+      type:userType,
       permissions: permission,
       organizationId: organizationId,
     },

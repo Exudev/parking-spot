@@ -29,6 +29,7 @@ export interface Organization {
 }
 
 export interface User {
+  userType:"user";
   username: string; 
   organizationId:string;
   email: string;
@@ -37,7 +38,9 @@ export interface User {
   permissions: [PermissionType];
   password: string;
 }
-export type Driver = Omit<User,"permissions"| "organizationId">;
+export type Driver = Omit<User,"userType"| "organizationId"> & {
+  userType: "driver";
+};
 
 export type EmptyObject = Record<string, never>;
 
@@ -53,9 +56,6 @@ export interface PublicProfile {
   name: string;
   lastname: string;
 }
-
-
-export type UserSafe = Omit<User, "password">
 
 export interface ParkingLot {
   name: string;
@@ -74,12 +74,15 @@ export type ParkingLookup = Pick<ParkingLot, "name" | "location">;
 export type ResponseType = "response"  | "info"  | "error";
 export type WithoutAuthRequest = {
 type: "request";
-
 };  
 export type BaseResponse = {
   type: "response";
 };
 export type BaseRequest = {
+  type: "request";
+  account: AccountOrganizationToken;
+};
+export type BaseDriverRequest = {
   type: "request";
   account: AccountOrganizationToken;
 };

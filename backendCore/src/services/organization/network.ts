@@ -18,9 +18,9 @@ import {
   createOrganizationRequestSchema,
   deleteOrganizationRequestSchema,
   validateRequest,
-} from "../../middlewares/validatorMiddleware";
+} from "../../middlewares/request-schemas";
 import passport from "passport";
-import { checkPermissions, extractAccountFromToken } from "../../middlewares/AuthMiddleware";
+import { checkPermissions, extractAccountFromToken, isOrganizationUser } from "../../middlewares/AuthMiddleware";
 
 const organizationRouter = express.Router();
 
@@ -35,6 +35,7 @@ organizationRouter.post(
 organizationRouter.delete(
   "/organization/:id", 
   passport.authenticate("jwt", { session: false }),
+  isOrganizationUser,
   checkPermissions(['admin']),
   validateRequest(deleteOrganizationRequestSchema),
   extractAccountFromToken,
@@ -48,17 +49,27 @@ organizationRouter.post(
   "/parking-lot",
   passport.authenticate("jwt", { session: false }),
   extractAccountFromToken,
+  isOrganizationUser(),
+   (req, res, next) => {
+    console.log("===> Antes de entrar a addParkingLot");
+    next();
+  },
   addParkingLot
 );
 organizationRouter.delete(
   "/parking-lot",
-  passport.authenticate("jwt", { session: false }),
+  passport.authenticate("jwt", { session: false }),(req, res, next) => {
+    console.log("===> Después del passport, req.user:", req.user);
+    next();
+  },
+  isOrganizationUser,
   extractAccountFromToken,
   removeParkingLot
 );
 organizationRouter.get(
   "parking-lot/",
   passport.authenticate("jwt", { session: false }),
+  isOrganizationUser,
   extractAccountFromToken, 
   getAllParkingLot
 );
@@ -66,6 +77,7 @@ organizationRouter.get(
 organizationRouter.get(
   "parking-lot/:id",
   passport.authenticate("jwt", { session: false }),
+  isOrganizationUser,
   extractAccountFromToken,
   getParkingLot
 );

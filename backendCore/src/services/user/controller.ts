@@ -1,71 +1,65 @@
 import { Request, Response, NextFunction } from "express";
-import { Driver, User } from "../../types/types";
+import { Driver } from "../../types/types";
 import userRepository from "./repository";
-import { success, error } from "../../network/response";
-import { AppError, ValidationError } from "../../utils/errors";
+import { error, success } from "../../network/response";
 
-async function createUser(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
-  try {
-    const user: User = req.body;
-    const newUser = await userRepository.createUser({type:'request', user:user});
-    if (newUser) {
-      success(req, res, "created", "user created successfully", 201);
-    } else {
-      next(new ValidationError("server-error", "Failed to create user"));
-    }
-  } catch (err) {
-    console.error("Error creating user:", err);
-    next(new AppError("error", "server-error", "server-error", err));
-  }
-}
+
 async function createDriver(
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ): Promise<void> {
   try {
-    const driver: Driver = req.body;
-    const newUser = await userRepository.createDriver({type:'request', driver:driver});
-    if (newUser) {
-      success(req, res, "created", "driver created successfully", 201);
-    } else {
-      next(new ValidationError("server-error", "Failed to create driver"));
-    }
-  } catch (err) {
-    console.error("Error creating user:", err);
-    next(new AppError("error", "server-error", "server-error", err));
-  }
-}
-async function login(
-  req: Request,
-  res: Response,
-): Promise<void> {
-  try {
-    const email = req.body.email;
-    const password = req.body.password;
-    const auth = await userRepository.login({
+    const driver: Driver = req.body.user;
+    const result = await userRepository.createDriver({
       type: "request",
-      password: password,
-      username: email,
+      driver: driver,
     });
-    if (auth.type !== "response") {
-      error(req, res, auth.errorCode, auth.errorMessage);
-    }
-    if (auth.type === "response") {
-      res.cookie("access_token", auth.token, {
-        httpOnly: true,
-        maxAge: 1000 * 60 * 60,
-        sameSite: "strict",
-      });
-      success(req, res, "created", "successfully login", 201);
+    switch (result.type) {
+      case "response":
+        success(
+          req,
+          res,
+          "created",
+          `driver ${result.username} created successfully`
+        );
+        break;
+      case "error":
+        error(req, res, result.errorCode, result.errorMessage);
+        break;
+      default:
+          throw new Error("Invalid Option");
     }
   } catch (err) {
-    console.error("Error creating user:", err);
-    error(req, res, "server-error", "server-error", 500);
+    console.error("Error removing creating driver ", err);
   }
 }
-export { createUser,createDriver, login };
+// async function login(
+//   req: Request,
+//   res: Response,
+// ): Promise<void> {
+//   try {
+//     const email = req.body.email;
+//     const password = req.body.password;
+//     const auth = await userRepository.login({
+//       type: "request",
+//       password: password,
+//       username: email,
+//     });
+//     if (auth.type !== "response") {
+//       error(req, res, auth.errorCode, auth.errorMessage);
+//     }
+//     if (auth.type === "response") {
+//       res.cookie("access_token", auth.token, {
+//         httpOnly: true,
+//         maxAge: 1000 * 60 * 60,
+//         sameSite: "strict",
+//       });
+//       success(req, res, "created", "successfully login", 201);
+//     }
+//   } catch (err) {
+//     console.error("Error creating user:", err);
+//     error(req, res, "server-error", "server-error", 500);
+//   }
+// }
+export {  createDriver };
