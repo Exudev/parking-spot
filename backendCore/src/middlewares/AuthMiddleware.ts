@@ -41,7 +41,6 @@ export function checkPermissions(permissions: PermissionType[]) {
 
 export function isOrganizationUser() {
   return (req: Request, res: Response, next: NextFunction) => {
-    console.log("hola", req.account)
     const user = req.account;
     if (user && user.userType === "user") {
       return next();

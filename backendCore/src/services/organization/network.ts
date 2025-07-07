@@ -16,6 +16,7 @@ import {
 } from "./controller";
 import {
   createOrganizationRequestSchema,
+  createParkingLotRequestSchema,
   deleteOrganizationRequestSchema,
   validateRequest,
 } from "../../middlewares/request-schemas";
@@ -35,7 +36,7 @@ organizationRouter.post(
 organizationRouter.delete(
   "/organization/:id", 
   passport.authenticate("jwt", { session: false }),
-  isOrganizationUser,
+  isOrganizationUser(),
   checkPermissions(['admin']),
   validateRequest(deleteOrganizationRequestSchema),
   extractAccountFromToken,
@@ -50,18 +51,13 @@ organizationRouter.post(
   passport.authenticate("jwt", { session: false }),
   extractAccountFromToken,
   isOrganizationUser(),
-   (req, res, next) => {
-    console.log("===> Antes de entrar a addParkingLot");
-    next();
-  },
+  checkPermissions(['admin','moderator']),
+  validateRequest(createParkingLotRequestSchema),
   addParkingLot
 );
 organizationRouter.delete(
   "/parking-lot",
-  passport.authenticate("jwt", { session: false }),(req, res, next) => {
-    console.log("===> Después del passport, req.user:", req.user);
-    next();
-  },
+  passport.authenticate("jwt", { session: false }),
   isOrganizationUser,
   extractAccountFromToken,
   removeParkingLot

@@ -13,9 +13,6 @@ const options: StrategyOptions = {
 export const JwtStrategy = new Strategy(
   options,
   (payload: any, done: (_error: any, _user?: any) => void) => {
-    console.log("se queda aqui")
-    console.log("Payload recibido en strategy:", payload);
-
     return done(null, payload);
   }
 );

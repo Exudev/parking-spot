@@ -13,7 +13,7 @@ const OrganizationIdSchema = z.string().min(1).max(40);
 
 export const ORGANIZATION_URL_REGEX = /^\/organization\/[\w-]{1,40}$/;
 
-const validateRequest = (schema: z.ZodSchema) => {
+export const validateRequest = (schema: z.ZodSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       schema.parse(req);
@@ -124,7 +124,7 @@ export const deleteOrganizationRequestSchema = z.object({
 export const createParkingLotRequestSchema = z.object({
   headers: AuthHeadersSchema,
   method: z.literal("POST"),
-  url: z.string().regex(ORGANIZATION_URL_REGEX, "Invalid URL format"),
+  url: z.literal("/parking-lot"),
   body: z.object({
     name: z.string().min(3).max(70),
     location: z.object({
@@ -137,5 +137,3 @@ export const createParkingLotRequestSchema = z.object({
   }),
   params: EmptyObjectSchema,
 });
-
-export { validateRequest };

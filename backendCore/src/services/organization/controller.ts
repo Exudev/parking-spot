@@ -190,7 +190,6 @@ async function addParkingLot(req: Request, res: Response): Promise<void> {
       default:
         throw new Error("Invalid Option");
     }
-    success(req, res, "created", JSON.stringify(result), 200);
   } catch (err) {
     console.error("Error creating parking lot:", err);
   }

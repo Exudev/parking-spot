@@ -286,7 +286,6 @@ class OrganizationRepository {
   public async addParkingLot(
     req: AddParkingLotRequest
   ): Promise<AddParkingLotResponse> {
-    console.log("addparkinglot");
     const exists = await this.organizationCollection.findOne({
       type: "parking-lot",
       organizationId: req.account.organizationId,
