@@ -15,3 +15,5 @@ export const DB_USER = getEnv("DB_USER");
 export const DB_PASSWORD = getEnv("DB_PASSWORD");
 export const DB_HOST = getEnv("DB_HOST");
 export const APP_ORIGIN = getEnv("APP_ORIGIN");
+export const USER_EMAIL_SENDER = getEnv("USER_EMAIL_SENDER")
+export const PASS_EMAIL_SENDER = getEnv("PASS_EMAIL_SENDER")

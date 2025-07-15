@@ -9,9 +9,12 @@ import {
   CreateUserResponse,
   FindByEmailResponse,
   FindDriverByEmailResponse,
+  ForgotPasswordRequest,
+  ForgotPasswordResponse,
 } from "./types";
 
 import {  hashValue,  } from "../../shared/utils";
+import { sendForgotPasswordEmail, sendWelcomeEmail } from "../task/nodemailer";
 class UserRepository {
   private userCollection = UserCollection;
 
@@ -218,6 +221,7 @@ class UserRepository {
         permissions: ["driver"],
       });
       if (created.insertedId) {
+        sendWelcomeEmail(req.driver.email,req.driver.username);
         return { type:"response", username: req.driver.username};
       }
       return {
@@ -229,6 +233,33 @@ class UserRepository {
       console.log(error);
       throw new RepositoryError("server-error", "server-error", error);
     }
+  }
+
+  public async forgotPassword(req: ForgotPasswordRequest): Promise<ForgotPasswordResponse>{
+    try {
+       const foundUser = await this.userCollection.findOne(
+        { type: "driver", email: { $eq: req.email } },
+        { collation: { locale: "en", strength: 3 } }
+      );
+      if(!foundUser?._id){
+        return {
+          type:"error",
+          errorCode:"not-found",
+          errorMessage:"user-not-found"
+        }
+      }
+    //  const mail = await sendForgotPasswordEmail(foundUser.email,);
+
+      return {
+        type:"response",
+        result:true,
+      }
+      
+    } catch (error) {
+      console.log(error);
+      throw new RepositoryError("server-error", "server-error", error);
+    }
+
   }
 //   public async reserveParkingSpots(
 // req:

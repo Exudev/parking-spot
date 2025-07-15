@@ -4,7 +4,7 @@ import { createDriver } from "./controller";
 import passport from "passport";
 import jwt from "jsonwebtoken";
 import { SECRET_KEY_JWT } from "../../constants/env";
-import { createDriverRequestSchema, loginRequestSchema, validateRequest } from "@src/middlewares/request-schemas";
+import { createDriverRequestSchema, loginRequestSchema, recoveryRequestSchema, validateRequest } from "@src/middlewares/request-schemas";
 const userRouter = express.Router();
 
 userRouter.post(
@@ -29,6 +29,7 @@ userRouter.post(
 // driver
 userRouter.post("/driver",validateRequest(createDriverRequestSchema),createDriver);
 
+userRouter.post("/recovery-driver",validateRequest(recoveryRequestSchema),);
 
 export default userRouter;
  

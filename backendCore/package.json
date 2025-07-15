@@ -18,6 +18,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@types/nodemailer": "^6.4.17",
     "bcrpyt": "^2.0.0",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
@@ -30,6 +31,7 @@
     "mongodb": "^6.10.0",
     "mongoose": "^8.4.1",
     "node-ts": "^6.0.1",
+    "nodemailer": "^7.0.5",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",

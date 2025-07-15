@@ -111,6 +111,15 @@ export const loginRequestSchema = z.object({
   }),
   params: EmptyObjectSchema,
 });
+export const recoveryRequestSchema = z.object({
+  headers: z.object({}).passthrough(),
+  method: z.literal("POST"),
+  url: z.literal("/recovery"),
+  body: z.object({
+    email: z.string().min(1).max(255),
+  }),
+  params: EmptyObjectSchema,
+});
 export const deleteOrganizationRequestSchema = z.object({
   headers: AuthHeadersSchema,
   method: z.literal("DELETE"),

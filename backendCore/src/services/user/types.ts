@@ -25,6 +25,18 @@ export type CreateUserResponse =
     })
   | RepositoryError;
 
+
+export type ForgotPasswordRequest = WithoutAuthRequest & {
+  email: string;
+};
+
+export type ForgotPasswordResponse =
+  | (BaseResponse & {
+      result: boolean;
+    })
+  | RepositoryError;
+
+
   export type reserveParkingSpotRequest = WithoutAuthRequest & {
   driver: Driver;
 };
