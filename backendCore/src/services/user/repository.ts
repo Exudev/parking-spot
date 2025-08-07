@@ -14,7 +14,7 @@ import {
 } from "./types";
 
 import {  hashValue,  } from "../../shared/utils";
-import { sendForgotPasswordEmail, sendWelcomeEmail } from "../task/nodemailer";
+import {  sendWelcomeEmail } from "../task/nodemailer";
 class UserRepository {
   private userCollection = UserCollection;
 
