@@ -2,7 +2,7 @@ export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
 
 interface ApiOptions {
   method?: HttpMethod
-  body?: unknown
+  body?: Record<string, string>
   headers?: Record<string, string>
 }
 
@@ -21,7 +21,6 @@ export async function useApi<T = unknown>(endpoint: string, options: ApiOptions 
   })
 
   if (!response.ok) {
-    // Aquí podrías manejar errores de forma global
     throw new Error(`Error ${response.status}: ${response.statusText}`)
   }
 

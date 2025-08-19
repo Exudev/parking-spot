@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import Page from '../components/Page.vue'
+import { AuthService } from '../services/authService'
 
 const email = ref('')
 const password = ref('')
@@ -12,24 +13,11 @@ const handleLogin = async () => {
   loading.value = true
 
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_BASE}/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: email.value,
-        password: password.value,
-     userType:"organization-user"
-      }),
-    })
-
-    const data = await res.json()
-    if (!res.ok) {
-      throw new Error(data.message || 'Error al iniciar sesión')
-    }
-    console.log('Login exitoso:', data)
+    const data = await AuthService.login(email.value, password.value);
+    console.log('Login exitoso:', data);
+    localStorage.setItem('token', data.token);
   } catch (err: any) {
+    console.log(err);
     error.value = err.message || 'Error desconocido'
   } finally {
     loading.value = false

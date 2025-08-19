@@ -19,12 +19,10 @@ export const extractAccountFromToken = (
 
   try {
     const decoded = jwt.verify(token, SECRET_KEY_JWT) as AccountOrganizationToken;
-    console.log("extractAccountFromToken: decoded payload", decoded);
-
     req.account = decoded;
     next();
   } catch (error) {
-    console.log("extractAccountFromToken: JWT verification failed", error);
+    console.error("extractAccountFromToken: JWT verification failed", error);
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
