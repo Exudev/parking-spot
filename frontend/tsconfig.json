@@ -22,8 +22,8 @@
     // Stricter Typechecking Options
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
-"module": "ESNext",
-    "moduleResolution": "node",
+"module": "node16",
+    "moduleResolution": "node16",
     // Style Options
     // "noImplicitReturns": true,
     // "noImplicitOverride": true,
