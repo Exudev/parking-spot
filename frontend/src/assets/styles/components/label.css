@@ -1,0 +1,33 @@
+label {
+  color: #333;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+
+.label-sm {
+  font-size: 12px;
+}
+
+.label-md {
+  font-size: 14px;
+}
+
+.label-lg {
+  font-size: 18px;
+}
+
+.label-xl {
+  font-size: 22px;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}

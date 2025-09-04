@@ -1,0 +1,13 @@
+.page-container {
+  padding: 2rem;
+  max-width: 960px;
+  margin: auto;
+}
+
+.page-header {
+  margin-bottom: 1.5rem;
+}
+
+.page-content {
+  margin-top: 2rem;
+}

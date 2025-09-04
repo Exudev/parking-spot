@@ -1,0 +1,112 @@
+
+.btn {
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease-in-out;
+}
+
+
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.85rem;
+}
+
+.btn-md {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+}
+
+.btn-lg {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.2rem;
+}
+
+.btn-primary {
+  background-color: #42b983;
+  color: white;
+}
+.btn-primary:hover:not(.btn-disabled) {
+  background-color: #369f74;
+}
+
+.btn-secondary {
+  background-color: #ddd;
+  color: #333;
+}
+.btn-secondary:hover:not(.btn-disabled) {
+  background-color: #bbb;
+}
+
+.btn-danger {
+  background-color: #e74c3c;
+  color: white;
+}
+.btn-danger:hover:not(.btn-disabled) {
+  background-color: #c0392b;
+}
+
+
+.btn-disabled,
+.btn:disabled {
+  background-color: #aaa !important;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+.btn {
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease-in-out;
+}
+
+
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.85rem;
+}
+
+.btn-md {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+}
+
+.btn-lg {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.2rem;
+}
+
+
+.btn-primary {
+  background-color: #42b983;
+  color: white;
+}
+.btn-primary:hover:not(.btn-disabled) {
+  background-color: #369f74;
+}
+
+.btn-secondary {
+  background-color: #ddd;
+  color: #333;
+}
+.btn-secondary:hover:not(.btn-disabled) {
+  background-color: #bbb;
+}
+
+.btn-danger {
+  background-color: #e74c3c;
+  color: white;
+}
+.btn-danger:hover:not(.btn-disabled) {
+  background-color: #c0392b;
+}
+
+
+.btn-disabled,
+.btn:disabled {
+  background-color: #aaa !important;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
